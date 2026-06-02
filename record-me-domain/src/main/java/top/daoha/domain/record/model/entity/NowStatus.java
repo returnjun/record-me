@@ -11,13 +11,13 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class nowStatus {
+public class NowStatus {
     //用户id
     private Long userId;
     //开始时间
     private Date startDate;
     //结束时间
     private Date endDate;
-    //是否为当前最新,是否属于生理期之间
+    //是否为当前最新
     private Integer isActive;
 }
