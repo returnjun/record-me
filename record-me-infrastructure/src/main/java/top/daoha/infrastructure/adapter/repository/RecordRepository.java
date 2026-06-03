@@ -49,6 +49,7 @@ public class RecordRepository implements IRecordRepository {
         IndexInfoAggregate indexInfoAggregate = IndexInfoAggregate.builder()
                 .user(UserEntity.builder()
                         .userId(userInfo.getUserId())
+                        .userName(userInfo.getUsername())
                         .avatar(userInfo.getAvatar())
                         .avgCycleDays(userInfo.getAvgCycleDays())
                         .avgPeriodDays(userInfo.getAvgPeriodDays())

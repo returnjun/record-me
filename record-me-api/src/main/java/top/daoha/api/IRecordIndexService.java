@@ -9,10 +9,10 @@ public interface IRecordIndexService {
     //查询首页信息
     public Response<RecordIndexResponseDTO> getIndexInfoAggregate(RecordIndexRequestDTO recordIndexRequestDTO);
 
-    //查询首页信息
+    //结束当前周期
     public Response<Boolean> overCycleRecord(RecordIndexRequestDTO recordIndexRequestDTO);
 
-    //查询首页信息
+    //开启新的周期
     public Response<Boolean> startCycleRecord(RecordIndexRequestDTO recordIndexRequestDTO);
 
 }

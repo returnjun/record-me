@@ -16,6 +16,8 @@ public class RecordIndexResponseDTO {
 
     //用户id
     private Long userId;
+    //用户名
+    private String userName;
     //头像
     private String avatar;
     //平均间隔时间

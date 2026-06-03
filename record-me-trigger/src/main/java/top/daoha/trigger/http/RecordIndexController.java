@@ -90,6 +90,7 @@ public class RecordIndexController implements IRecordIndexService {
             // 构建返回的 DTO
             RecordIndexResponseDTO dto = RecordIndexResponseDTO.builder()
                     .userId(aggregate.getUser().getUserId())
+                    .userName(aggregate.getUser().getUserName())
                     .avatar(aggregate.getUser().getAvatar())
                     .avgCycleDays(aggregate.getUser().getAvgCycleDays())
                     .avgPeriodDays(aggregate.getUser().getAvgPeriodDays())
@@ -110,7 +111,7 @@ public class RecordIndexController implements IRecordIndexService {
                     .build();
 
         } catch (Exception e) {
-            log.error("查询首页信息失败 userId={}", recordIndexRequestDTO.getUserId(), e);
+            log.error("查询首页信息失败 userId={}", recordIndexRequestDTO.getUserId(), e.getMessage());
             return Response.<RecordIndexResponseDTO>builder()
                     .code(ResponseCode.UN_ERROR.getCode())
                     .info(ResponseCode.UN_ERROR.getInfo())
