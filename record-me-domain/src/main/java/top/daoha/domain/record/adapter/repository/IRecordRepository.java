@@ -1,6 +1,7 @@
 package top.daoha.domain.record.adapter.repository;
 
 import top.daoha.domain.record.model.aggregate.IndexInfoAggregate;
+import top.daoha.domain.record.model.entity.SymptomEntity;
 
 public interface IRecordRepository {
     //查询首页信息
@@ -13,4 +14,11 @@ public interface IRecordRepository {
     boolean closeCycleRecord(Long userId);
     //插入一个新的周期记录，isactiive是1，以及开始时间等数据
     Boolean startCycleRecord(Long userId);
+    //获得日常状态
+    SymptomEntity getSymptomById(Long userid,Long cycleId);
+    //插入日常状态
+    SymptomEntity InsertSymptom(Long userid,Long cycleId);
+    //改变日常状态
+    Boolean changeSymptom(SymptomEntity symptomEntity);
+
 }

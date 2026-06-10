@@ -2,6 +2,7 @@ package top.daoha.domain.record.service.change;
 
 import org.springframework.stereotype.Service;
 import top.daoha.domain.record.adapter.repository.IRecordRepository;
+import top.daoha.domain.record.model.entity.SymptomEntity;
 
 import javax.annotation.Resource;
 
@@ -27,11 +28,13 @@ public class UpdateRecordService implements IUpdateRecordService {
     public Boolean startCycleRecord(Long userId) {
         //这个函数是开始一个周期，当用户点击开始的时候
         //关闭之前最新的那个周期
-        boolean isSuccess = recordRepository.closeCycleRecord(userId);
-        if(!isSuccess){
-            return false;
-        }
+        recordRepository.closeCycleRecord(userId);
         //插入一个新的最新周期
         return recordRepository.startCycleRecord(userId);
+    }
+
+    @Override
+    public Boolean changeSymptom(SymptomEntity symptomEntity) {
+        return recordRepository.changeSymptom(symptomEntity);
     }
 }

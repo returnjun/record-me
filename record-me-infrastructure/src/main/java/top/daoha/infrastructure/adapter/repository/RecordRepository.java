@@ -4,15 +4,19 @@ import org.springframework.stereotype.Repository;
 import top.daoha.domain.record.adapter.repository.IRecordRepository;
 import top.daoha.domain.record.model.aggregate.IndexInfoAggregate;
 import top.daoha.domain.record.model.entity.NowStatus;
+import top.daoha.domain.record.model.entity.SymptomEntity;
 import top.daoha.domain.record.model.entity.UserEntity;
 import top.daoha.infrastructure.dao.ICycleRecordDao;
 import top.daoha.infrastructure.dao.IDailyBehaviorLogDao;
 import top.daoha.infrastructure.dao.IDailySymptomDao;
 import top.daoha.infrastructure.dao.IUserInfoDao;
 import top.daoha.infrastructure.dao.po.CycleRecord;
+import top.daoha.infrastructure.dao.po.DailySymptom;
 import top.daoha.infrastructure.dao.po.UserInfo;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 @Repository
@@ -23,6 +27,12 @@ public class RecordRepository implements IRecordRepository {
 
     @Resource
     private IUserInfoDao userInfoDao;
+
+    @Resource
+    private IDailySymptomDao dailySymptomDao;
+
+    @Resource
+    private IDailyBehaviorLogDao dailyBehaviorLogDao;
 
     @Override
     public IndexInfoAggregate getIndexInfoAggregate(Long userId) {
@@ -49,13 +59,13 @@ public class RecordRepository implements IRecordRepository {
         IndexInfoAggregate indexInfoAggregate = IndexInfoAggregate.builder()
                 .user(UserEntity.builder()
                         .userId(userInfo.getUserId())
-                        .userName(userInfo.getUsername())
                         .avatar(userInfo.getAvatar())
                         .avgCycleDays(userInfo.getAvgCycleDays())
                         .avgPeriodDays(userInfo.getAvgPeriodDays())
                         .build())
                 .nowStatus(NowStatus.builder()
                         .userId(cycleRecord.getUserId())
+                        .cycleId(cycleRecord.getCycleId())
                         .isActive(cycleRecord.getIsActive())
                         .startDate(cycleRecord.getStartDate())
                         .endDate(cycleRecord.getEndDate())
@@ -115,4 +125,64 @@ public class RecordRepository implements IRecordRepository {
         int count = cycleRecordDao.insert(newRecord);
         return count > 0;
     }
+
+    @Override
+    public SymptomEntity getSymptomById(Long userid, Long cycleId) {
+        String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        DailySymptom po = dailySymptomDao.selectByCycleIdAndDate(cycleId, today);
+        if (po == null) {
+            return null;
+        }
+        SymptomEntity entity = new SymptomEntity();
+        entity.setRecordId(po.getRecordId());
+        entity.setCycleId(po.getCycleId());
+        entity.setUserId(po.getUserId());
+        entity.setRecordDate(po.getRecordDate());
+        entity.setFlowLevel(po.getFlowLevel());
+        entity.setPainLevel(po.getPainLevel());
+        entity.setMood(po.getMood());
+        entity.setNotes(po.getNotes());
+        entity.setCreateTime(po.getCreateTime());
+        entity.setUpdateTime(po.getUpdateTime());
+        return entity;
+    }
+
+    @Override
+    public SymptomEntity InsertSymptom(Long userid, Long cycleId) {
+        DailySymptom po = new DailySymptom();
+        po.setCycleId(cycleId);
+        po.setUserId(userid);
+        po.setRecordDate(new Date());
+        po.setFlowLevel(0);
+        po.setPainLevel(0);
+        dailySymptomDao.insert(po);
+
+        SymptomEntity entity = new SymptomEntity();
+        entity.setRecordId(po.getRecordId());
+        entity.setCycleId(po.getCycleId());
+        entity.setUserId(po.getUserId());
+        entity.setRecordDate(po.getRecordDate());
+        entity.setFlowLevel(po.getFlowLevel());
+        entity.setPainLevel(po.getPainLevel());
+        entity.setMood(po.getMood());
+        entity.setNotes(po.getNotes());
+        entity.setCreateTime(po.getCreateTime());
+        entity.setUpdateTime(po.getUpdateTime());
+        return entity;
+    }
+
+    @Override
+    public Boolean changeSymptom(SymptomEntity symptomEntity) {
+        DailySymptom po = new DailySymptom();
+        po.setCycleId(symptomEntity.getCycleId());
+        po.setUserId(symptomEntity.getUserId());
+        po.setRecordId(symptomEntity.getRecordId());
+        po.setFlowLevel(symptomEntity.getFlowLevel());
+        po.setPainLevel(symptomEntity.getPainLevel());
+        po.setMood(symptomEntity.getMood());
+        po.setNotes(symptomEntity.getNotes());
+        int count = dailySymptomDao.updateById(po);
+        return count > 0;
+    }
+
 }

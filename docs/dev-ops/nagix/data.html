@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>数据中心 - 月月友</title>
+    <style>
+        /* ================= 全局样式与极光背景复用 ================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', sans-serif; }
+
+        body {
+            background: linear-gradient(120deg, #ffe2ed 0%, #eadaff 25%, #d4f7ff 50%, #e0fbf2 75%, #ffe2ed 100%);
+            background-size: 200% 200%; animation: auroraBreathe 12s ease infinite; color: #333;
+            min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden;
+        }
+
+        @keyframes auroraBreathe { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        /* ================= 顶部栏样式 ================= */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; }
+        .app-title { font-size: 22px; font-weight: 800; background: linear-gradient(90deg, #ff7eb3, #9d7dfa); -webkit-background-clip: text; color: transparent; letter-spacing: 2px; text-shadow: 0 4px 15px rgba(255,126,179,0.3); position: relative; }
+        .app-title::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 15px; height: 3px; background: #9d7dfa; border-radius: 2px; }
+
+        .header-controls { display: flex; align-items: center; gap: 15px; }
+        /* 次数选择器美化 */
+        .count-select {
+            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(157, 125, 250, 0.3);
+            padding: 6px 12px; border-radius: 12px; font-size: 13px; font-weight: bold; color: #6a73a0; outline: none; cursor: pointer;
+        }
+
+        .avatar-container { display: flex; align-items: center; gap: 10px; }
+        .avatar { width: 42px; height: 42px; background: linear-gradient(135deg, #a1c4fd, #c2e9fb); background-size: cover; background-position: center; border-radius: 50%; border: 2px solid rgba(255,255,255,0.8); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .username { font-size: 15px; font-weight: 600; color: #555; }
+
+        /* ================= 核心滚动卡片区 ================= */
+        .content-scroll { flex: 1; padding: 0 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; padding-bottom: 100px; }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 24px; padding: 20px;
+            box-shadow: 0 8px 30px rgba(162, 169, 255, 0.12);
+        }
+
+        /* ================= 统计数字组件 ================= */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .stat-box { background: rgba(255, 255, 255, 0.4); border: 1px solid rgba(255,255,255,0.6); border-radius: 18px; padding: 15px; text-align: center; }
+        .stat-label { font-size: 13px; color: #7f8ba4; font-weight: 600; margin-bottom: 5px; }
+        .stat-val { font-size: 26px; font-weight: 800; background: linear-gradient(135deg, #ff7eb3, #9d7dfa); -webkit-background-clip: text; color: transparent; }
+        .stat-unit { font-size: 12px; color: #9d7dfa; margin-left: 2px; font-weight: normal; }
+
+        /* ================= 智能日历组件 ================= */
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 0 5px; }
+        .cal-title { font-size: 16px; font-weight: 800; color: #5c6280; }
+        .cal-nav-btn { background: rgba(157, 125, 250, 0.1); border: none; color: #9d7dfa; width: 30px; height: 30px; border-radius: 50%; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .cal-nav-btn:active { transform: scale(0.9); background: rgba(157, 125, 250, 0.2); }
+
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; }
+        .weekday { font-size: 12px; font-weight: 700; color: #a9b5d6; padding-bottom: 5px; }
+        .day-cell { position: relative; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: #4e546a; border-radius: 50%; transition: all 0.2s; }
+        .day-other-month { color: #ccc; }
+
+        /* 状态高亮样式定义 */
+        .day-period { background: linear-gradient(135deg, #ffe0e6, #ffcbd6); color: #ff527b; font-weight: 700; border-radius: 35%; }
+        .day-today { border: 2px solid #9d7dfa; box-shadow: 0 0 10px rgba(157, 125, 250, 0.4); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(157,125,250,0.5); } 70% { box-shadow: 0 0 0 6px rgba(157,125,250,0); } 100% { box-shadow: 0 0 0 0 rgba(157,125,250,0); } }
+
+        /* ================= 趋势图表区 ================= */
+        .chart-container { position: relative; width: 100%; height: 180px; margin-top: 10px; }
+        #trendChart { width: 100%; height: 100%; display: block; }
+        .chart-legend { display: flex; justify-content: center; gap: 20px; margin-top: 10px; font-size: 12px; font-weight: 600; color: #666; }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .dot-period { width: 10px; height: 10px; background: #ff7eb3; border-radius: 50%; }
+        .dot-interval { width: 10px; height: 10px; background: #9d7dfa; border-radius: 50%; }
+
+        /* ================= 底部固定导航栏 ================= */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; margin: 20px 20px 30px 20px; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 25px; display: flex; justify-content: space-between; padding: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); z-index: 100; }
+        .nav-item { flex: 1; text-align: center; padding: 12px 0; border-radius: 20px; font-size: 15px; font-weight: 600; color: #888; cursor: pointer; transition: all 0.3s; }
+        .nav-item.active { background: #f1e9ff; color: #9d7dfa; box-shadow: 0 2px 10px rgba(157, 125, 250, 0.15); }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="app-title">月月友</div>
+    <div class="header-controls">
+        <select class="count-select" id="countSelector" onchange="loadData()">
+            <option value="3" selected>前 3 次</option>
+            <option value="5">前 5 次</option>
+            <option value="10">前 10 次</option>
+        </select>
+        <div class="avatar-container">
+            <div class="avatar" id="user-avatar"></div>
+            <div class="username" id="user-name">加载中...</div>
+        </div>
+    </div>
+</div>
+
+<div class="content-scroll">
+    <div class="glass-panel stats-grid">
+        <div class="stat-box">
+            <div class="stat-label">平均周期长度</div>
+            <div class="stat-val" id="avg-cycle">--<span class="stat-unit">天</span></div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label">平均行经期</div>
+            <div class="stat-val" id="avg-period">--<span class="stat-unit">天</span></div>
+        </div>
+    </div>
+
+    <div class="glass-panel" id="calendarPanel">
+        <div class="cal-header">
+            <button class="cal-nav-btn" onclick="changeMonth(-1)">◀</button>
+            <div class="cal-title" id="calendar-title">2026 年 06 月</div>
+            <button class="cal-nav-btn" onclick="changeMonth(1)">▶</button>
+        </div>
+        <div class="calendar-grid" id="calendarGrid">
+        </div>
+    </div>
+
+    <div class="glass-panel">
+        <div class="cal-title" style="margin-bottom: 10px;">周期趋势追踪</div>
+        <div class="chart-container">
+            <canvas id="trendChart"></canvas>
+        </div>
+        <div class="chart-legend">
+            <div class="legend-item"><div class="dot-period"></div>行经天数</div>
+            <div class="legend-item"><div class="dot-interval"></div>周期天数</div>
+        </div>
+    </div>
+</div>
+
+<div class="bottom-nav">
+    <div class="nav-item" onclick="window.location.href='index.html'">主页</div>
+    <div class="nav-item active" onclick="window.location.href='data.html'">数据</div>
+    <div class="nav-item" onclick="alert('个人中心正在建设中...🌸')">我的</div>
+</div>
+
+<script>
+    // 获取 Cookies 工具函数
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
+        return null;
+    }
+
+    let USER_ID = getCookie('userId') ? parseInt(getCookie('userId'), 10) : 5;
+    let USER_NAME = getCookie('username') || "元气少女";
+
+    // 设定的系统当前安全时间基准
+    const TODAY_STR = "2026-06-10";
+    const todayDate = new Date(TODAY_STR + "T00:00:00");
+
+    // 当前日历正在查看的年、月
+    let currentCalYear = 2026;
+    let currentCalMonth = 5; // 0-11 代表 1-12月 (5 代表 6月)
+
+    // 全局数据缓存，用于日历和图表联动渲染
+    let globalRecords = [];
+
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById('user-name').innerText = USER_NAME;
+        // 绑定滚轮切换月份事件
+        const calPanel = document.getElementById('calendarPanel');
+        calPanel.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            if (e.deltaY > 0) changeMonth(1);
+            else changeMonth(-1);
+        }, { passive: false });
+
+        loadData();
+    });
+
+    // 核心异步数据请求加载
+    async function loadData() {
+        const countVal = document.getElementById('countSelector').value;
+        const payload = { userId: USER_ID, count: parseInt(countVal, 10) };
+
+        try {
+            const response = await fetch('http://127.0.0.1:8088/record/data/query_cycle_list', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const res = await response.json();
+            if (res.code === "0000" && res.data) {
+                renderStatistics(res.data);
+            } else {
+                renderFallbackData();
+            }
+        } catch (error) {
+            console.error("网络请求异常，加载模拟Mock数据演示", error);
+            renderFallbackData();
+        }
+    }
+
+    // 渲染统计指标与触发联动重绘
+    function renderStatistics(data) {
+        if (data.userName) document.getElementById('user-name').innerText = data.userName;
+        if (data.avatar) document.getElementById('user-avatar').style.backgroundImage = `url('${data.avatar}')`;
+
+        document.getElementById('avg-cycle').innerHTML = `${data.avgCycleDays || '--'}<span class="stat-unit">天</span>`;
+        document.getElementById('avg-period').innerHTML = `${data.avgPeriodDays || '--'}<span class="stat-unit">天</span>`;
+
+        globalRecords = data.cycleRecords || [];
+
+        renderCalendar();
+        renderTrendChart();
+    }
+
+    // 针对接口异常或无网环境的漂亮Mock兜底函数
+    function renderFallbackData() {
+        const mockData = {
+            "userId": USER_ID,
+            "userName": USER_NAME,
+            "avatar": "https://api.dicebear.com/7.x/adventurer/svg?seed=" + USER_NAME,
+            "avgCycleDays": 19,
+            "avgPeriodDays": 4,
+            "cycleRecords": [
+                { "cycleId": 7, "startDate": "2026-06-03T00:00:00.000+00:00", "endDate": null },
+                { "cycleId": 2, "startDate": "2026-05-25T00:00:00.000+00:00", "endDate": "2026-06-02T00:00:00.000+00:00" },
+                { "cycleId": 1, "startDate": "2026-04-25T00:00:00.000+00:00", "endDate": "2026-04-29T00:00:00.000+00:00" }
+            ]
+        };
+        renderStatistics(mockData);
+    }
+
+    // 月份手动/滑轮切换
+    function changeMonth(direction) {
+        currentCalMonth += direction;
+        if (currentCalMonth > 11) { currentCalMonth = 0; currentCalYear++; }
+        else if (currentCalMonth < 0) { currentCalMonth = 11; currentCalYear--; }
+        renderCalendar();
+    }
+
+    // 核心日历算法：绘制与高亮判断
+    function renderCalendar() {
+        const grid = document.getElementById('calendarGrid');
+        const title = document.getElementById('calendar-title');
+        grid.innerHTML = '';
+
+        // 设置顶部月份文本显示
+        title.innerText = `${currentCalYear} 年 ${(currentCalMonth + 1).toString().padStart(2, '0')} 月`;
+
+        // 渲染周一到周日的表头
+        const weekDays = ['一', '二', '三', '四', '五', '六', '日'];
+        weekDays.forEach(day => {
+            const cell = document.createElement('div');
+            cell.className = 'weekday';
+            cell.innerText = day;
+            grid.appendChild(cell);
+        });
+
+        // 获取当前月份第1天和最后一天具体参数
+        const firstDay = new Date(currentCalYear, currentCalMonth, 1);
+        const lastDay = new Date(currentCalYear, currentCalMonth + 1, 0);
+
+        // 计算周几偏移量 (让周一作为第一列)
+        let startOffset = firstDay.getDay() - 1;
+        if (startOffset < 0) startOffset = 6; // 周日处理成偏移6
+
+        // 补齐上个月的尾巴日子
+        const prevMonthLastDay = new Date(currentCalYear, currentCalMonth, 0).getDate();
+        for (let i = startOffset - 1; i >= 0; i--) {
+            const dayNum = prevMonthLastDay - i;
+            const cell = document.createElement('div');
+            cell.className = 'day-cell day-other-month';
+            cell.innerText = dayNum;
+            grid.appendChild(cell);
+        }
+
+        // 渲染本月所有核心天数
+        const totalDays = lastDay.getDate();
+        for (let d = 1; d <= totalDays; d++) {
+            const cell = document.createElement('div');
+            cell.className = 'day-cell';
+            cell.innerText = d;
+
+            // 构造标准日期对比串 YYYY-MM-DD
+            const curDateObj = new Date(currentCalYear, currentCalMonth, d);
+            const dateStr = formatDate(curDateObj);
+
+            // 1. 判断是否属于生理期经期区间
+            if (checkIsInPeriod(curDateObj)) {
+                cell.classList.add('day-period');
+            }
+
+            // 2. 独立高亮系统“今天”
+            if (dateStr === TODAY_STR) {
+                cell.classList.add('day-today');
+            }
+
+            grid.appendChild(cell);
+        }
+    }
+
+    // 格式化函数：消除时区干扰
+    function formatDate(date) {
+        const y = date.getFullYear();
+        const m = (date.getMonth() + 1).toString().padStart(2, '0');
+        const d = date.getDate().toString().padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
+    // 精确匹配区间算法
+    function checkIsInPeriod(targetDate) {
+        // 去除具体时分秒干扰
+        const targetTime = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()).getTime();
+
+        for (let record of globalRecords) {
+            if (!record.startDate) continue;
+
+            const start = new Date(record.startDate.split('T')[0] + "T00:00:00").getTime();
+            let end;
+
+            if (record.endDate) {
+                end = new Date(record.endDate.split('T')[0] + "T00:00:00").getTime();
+            } else {
+                // 如果后端返回 endDate 为 null，则视作周期至今未完，一路加深渲染高亮到今天
+                end = new Date(TODAY_STR + "T00:00:00").getTime();
+            }
+
+            if (targetTime >= start && targetTime <= end) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // ==================== 原生高级 Canvas 趋势图表绘制 ====================
+    function renderTrendChart() {
+        const canvas = document.getElementById('trendChart');
+        if (!canvas) return;
+
+        // 动态适配高DPI屏幕防止模糊
+        const ctx = canvas.getContext('2d');
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width * window.devicePixelRatio;
+        canvas.height = rect.height * window.devicePixelRatio;
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+        const width = rect.width;
+        const height = rect.height;
+        ctx.clearRect(0, 0, width, height);
+
+        // 如果没有数据，绘制提示文案
+        if (globalRecords.length === 0) {
+            ctx.fillStyle = "#888";
+            ctx.font = "14px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("暂无周期趋势数据", width / 2, height / 2);
+            return;
+        }
+
+        // 解析并倒序排列数据（让时间线由远及近从左往右展示）
+        const records = [...globalRecords].reverse();
+
+        // 提取计算数据点
+        let periodData = []; // 行经期长度
+        let intervalData = []; // 完整周期长度
+
+        for (let i = 0; i < records.length; i++) {
+            const start = new Date(records[i].startDate.split('T')[0]);
+
+            // 计算行经期
+            let pDays = 4; // 缺省默认天数
+            if (records[i].endDate) {
+                pDays = Math.round((new Date(records[i].endDate.split('T')[0]) - start) / (1000 * 60 * 60 * 24)) + 1;
+            } else {
+                pDays = Math.round((todayDate - start) / (1000 * 60 * 60 * 24)) + 1;
+            }
+            periodData.push(pDays);
+
+            // 计算周期天数（当前周期的开始时间减去上一次周期的开始时间）
+            if (i > 0) {
+                const prevStart = new Date(records[i-1].startDate.split('T')[0]);
+                const cDays = Math.round((start - prevStart) / (1000 * 60 * 60 * 24));
+                intervalData.push(cDays);
+            } else {
+                intervalData.push(19); // 初始首期基准缺省参照数据
+            }
+        }
+
+        // 图表UI内部边界规划
+        const paddingLeft = 30;
+        const paddingRight = 20;
+        const paddingTop = 20;
+        const paddingBottom = 25;
+        const chartW = width - paddingLeft - paddingRight;
+        const chartH = height - paddingTop - paddingBottom;
+
+        // 计算最大值范围
+        const maxVal = Math.max(...periodData, ...intervalData, 28) + 4;
+
+        // 映射坐标轴转化函数
+        const getX = (index) => paddingLeft + (index / (records.length - 1 || 1)) * chartW;
+        const getY = (val) => paddingTop + chartH - (val / maxVal) * chartH;
+
+        // 绘制轻量横向背景虚网格线
+        ctx.strokeStyle = "rgba(131, 144, 193, 0.1)";
+        ctx.lineWidth = 1;
+        for (let l = 0; l <= 4; l++) {
+            const v = Math.round((maxVal / 4) * l);
+            const y = getY(v);
+            ctx.beginPath();
+            ctx.moveTo(paddingLeft, y);
+            ctx.lineTo(width - paddingRight, y);
+            ctx.stroke();
+
+            // 绘制左侧刻度数字文本
+            ctx.fillStyle = "#a9b5d6";
+            ctx.font = "10px sans-serif";
+            ctx.textAlign = "right";
+            ctx.fillText(v, paddingLeft - 6, y + 4);
+        }
+
+        // 1. 绘制“周期天数”折线（紫色渐变）
+        drawTrendLine(ctx, records, intervalData, getX, getY, "#9d7dfa", "rgba(157, 125, 250, 0.15)", chartH + paddingTop);
+
+        // 2. 绘制“行经天数”折线（粉色渐变）
+        drawTrendLine(ctx, records, periodData, getX, getY, "#ff7eb3", "rgba(255, 126, 179, 0.15)", chartH + paddingTop);
+
+        // 3. 绘制底部X轴刻度（月份简称标签）
+        records.forEach((rec, idx) => {
+            const d = new Date(rec.startDate.split('T')[0]);
+            const label = `${d.getMonth() + 1}/${d.getDate()}`;
+            ctx.fillStyle = "#8390c1";
+            ctx.font = "10px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(label, getX(idx), height - 8);
+        });
+    }
+
+    // 辅助绘制单条平滑曲线与数据小圆点方法
+    function drawTrendLine(ctx, records, dataList, getX, getY, color, areaColor, bottomY) {
+        ctx.beginPath();
+        for (let i = 0; i < dataList.length; i++) {
+            if (i === 0) ctx.moveTo(getX(i), getY(dataList[i]));
+            else ctx.lineTo(getX(i), getY(dataList[i]));
+        }
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.lineJoin = "round";
+        ctx.stroke();
+
+        // 填充折线下方半透明渐变区域
+        ctx.lineTo(getX(dataList.length - 1), bottomY);
+        ctx.lineTo(getX(0), bottomY);
+        ctx.fillStyle = areaColor;
+        ctx.fill();
+
+        // 绘制亮色质感数据原点
+        for (let i = 0; i < dataList.length; i++) {
+            ctx.beginPath();
+            ctx.arc(getX(i), getY(dataList[i]), 4, 0, Math.PI * 2);
+            ctx.fillStyle = "#ffffff";
+            ctx.fill();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+    }
+</script>
+</body>
+</html>

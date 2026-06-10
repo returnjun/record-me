@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 import top.daoha.api.IRecordIndexService;
 import top.daoha.api.dto.RecordIndexRequestDTO;
 import top.daoha.api.dto.RecordIndexResponseDTO;
+import top.daoha.api.dto.SymptomRequestDTO;
+import top.daoha.api.dto.SymptomResponseDTO;
 import top.daoha.api.response.Response;
 import top.daoha.domain.record.model.aggregate.IndexInfoAggregate;
+import top.daoha.domain.record.model.entity.SymptomEntity;
 import top.daoha.domain.record.service.IRecordService;
 import top.daoha.domain.record.service.change.IUpdateRecordService;
 import top.daoha.types.enums.RecordStatusEnumVO;
@@ -21,7 +24,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
+
 
 @Slf4j
 @RestController()
@@ -90,7 +93,7 @@ public class RecordIndexController implements IRecordIndexService {
             // 构建返回的 DTO
             RecordIndexResponseDTO dto = RecordIndexResponseDTO.builder()
                     .userId(aggregate.getUser().getUserId())
-                    .userName(aggregate.getUser().getUserName())
+                    .cycleId(aggregate.getNowStatus().getCycleId())
                     .avatar(aggregate.getUser().getAvatar())
                     .avgCycleDays(aggregate.getUser().getAvgCycleDays())
                     .avgPeriodDays(aggregate.getUser().getAvgPeriodDays())
@@ -186,6 +189,94 @@ public class RecordIndexController implements IRecordIndexService {
             }
         } catch (Exception e) {
             log.error("开始新周期异常 userId={}", recordIndexRequestDTO.getUserId(), e);
+            return Response.<Boolean>builder()
+                    .code(ResponseCode.UN_ERROR.getCode())
+                    .info(ResponseCode.UN_ERROR.getInfo())
+                    .build();
+        }
+    }
+
+    @RequestMapping(value = "query_symptom", method = RequestMethod.POST)
+    @Override
+    public Response<SymptomResponseDTO> getSymptom(@RequestBody SymptomRequestDTO dto) {
+        try {
+            if (dto.getUserId() == null || dto.getCycleId() == null) {
+                return Response.<SymptomResponseDTO>builder()
+                        .code(ResponseCode.ILLEGAL_PARAMETER.getCode())
+                        .info(ResponseCode.ILLEGAL_PARAMETER.getInfo())
+                        .build();
+            }
+
+            SymptomEntity entity = recordService.getSymptomById(dto.getUserId(), dto.getCycleId());
+
+            SymptomResponseDTO resp = SymptomResponseDTO.builder()
+                    .recordId(entity.getRecordId())
+                    .cycleId(entity.getCycleId())
+                    .userId(entity.getUserId())
+                    .recordDate(entity.getRecordDate())
+                    .flowLevel(entity.getFlowLevel())
+                    .painLevel(entity.getPainLevel())
+                    .mood(entity.getMood())
+                    .notes(entity.getNotes())
+                    .createTime(entity.getCreateTime())
+                    .updateTime(entity.getUpdateTime())
+                    .build();
+
+            log.info("查询日常状态成功 userId={}, cycleId={}, recordId={}",
+                    dto.getUserId(), dto.getCycleId(), entity.getRecordId());
+            return Response.<SymptomResponseDTO>builder()
+                    .code(ResponseCode.SUCCESS.getCode())
+                    .info(ResponseCode.SUCCESS.getInfo())
+                    .data(resp)
+                    .build();
+        } catch (Exception e) {
+            log.error("查询日常状态异常 userId={}, cycleId={}", dto.getUserId(), dto.getCycleId(), e);
+            return Response.<SymptomResponseDTO>builder()
+                    .code(ResponseCode.UN_ERROR.getCode())
+                    .info(ResponseCode.UN_ERROR.getInfo())
+                    .build();
+        }
+    }
+
+    @RequestMapping(value = "change_symptom", method = RequestMethod.POST)
+    @Override
+    public Response<Boolean> changeSymptom(@RequestBody SymptomRequestDTO dto) {
+        try {
+            if (dto.getCycleId() == null) {
+                return Response.<Boolean>builder()
+                        .code(ResponseCode.ILLEGAL_PARAMETER.getCode())
+                        .info(ResponseCode.ILLEGAL_PARAMETER.getInfo())
+                        .build();
+            }
+
+            SymptomEntity entity = new SymptomEntity();
+            entity.setUserId(dto.getUserId());
+            entity.setCycleId(dto.getCycleId());
+            entity.setRecordId(dto.getRecordId());
+            entity.setFlowLevel(dto.getFlowLevel());
+            entity.setPainLevel(dto.getPainLevel());
+            entity.setMood(dto.getMood());
+            entity.setNotes(dto.getNotes());
+
+            Boolean result = updateRecordService.changeSymptom(entity);
+
+            if (Boolean.TRUE.equals(result)) {
+                log.info("更新日常状态成功 recordId={}", dto.getRecordId());
+                return Response.<Boolean>builder()
+                        .code(ResponseCode.SUCCESS.getCode())
+                        .info(ResponseCode.SUCCESS.getInfo())
+                        .data(true)
+                        .build();
+            } else {
+                log.warn("更新日常状态失败 recordId={}", dto.getRecordId());
+                return Response.<Boolean>builder()
+                        .code(ResponseCode.UPDATE_ZERO.getCode())
+                        .info(ResponseCode.UPDATE_ZERO.getInfo())
+                        .data(false)
+                        .build();
+            }
+        } catch (Exception e) {
+            log.error("更新日常状态异常 recordId={}", dto.getRecordId(), e);
             return Response.<Boolean>builder()
                     .code(ResponseCode.UN_ERROR.getCode())
                     .info(ResponseCode.UN_ERROR.getInfo())

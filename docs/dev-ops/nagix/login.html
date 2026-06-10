@@ -92,6 +92,7 @@
             max-height: 60px;
             opacity: 1;
             overflow: hidden;
+            position: relative; /* 为提示框占位 */
         }
 
         .input-group.hidden {
@@ -116,21 +117,9 @@
             user-select: none;
         }
 
-        .shape-cloud {
-            border-radius: 20px;
-        }
-
-        .shape-flag {
-            border-radius: 15px 0 15px 0;
-            color: #17c3b2;
-            border-color: #a7ebe4;
-        }
-
-        .shape-paper {
-            border-radius: 4px 15px 15px 4px;
-            color: #ff7eb3;
-            border-color: #ffb6c1;
-        }
+        .shape-cloud { border-radius: 20px; }
+        .shape-flag { border-radius: 15px 0 15px 0; color: #17c3b2; border-color: #a7ebe4; }
+        .shape-paper { border-radius: 4px 15px 15px 4px; color: #ff7eb3; border-color: #ffb6c1; }
 
         .custom-input {
             flex: 1;
@@ -152,14 +141,53 @@
             box-shadow: 0 0 0 4px rgba(157, 125, 250, 0.15);
         }
 
-        .custom-input::placeholder {
-            color: #bbb;
-            font-size: 14px;
+        .custom-input::placeholder { color: #bbb; font-size: 14px; }
+
+        /* ================= 密码实时提示 (新增) ================= */
+        .password-hint {
+            display: none; /* 默认隐藏，仅注册时显示 */
+            flex-direction: column;
+            gap: 5px;
+            margin-top: -15px;
+            padding-left: 80px; /* 对齐输入框 */
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .password-hint.show {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hint-item {
+            color: #8390c1;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s;
+        }
+
+        .hint-item::before {
+            content: '○';
+            font-size: 10px;
+        }
+
+        .hint-item.valid {
+            color: #17c3b2;
+        }
+        .hint-item.valid::before {
+            content: '✔';
+            font-weight: bold;
         }
 
         /* ================= 核心操作按钮 ================= */
         .submit-btn {
-            margin-top: 10px;
+            margin-top: 5px;
             height: 48px;
             border-radius: 24px;
             border: none;
@@ -186,6 +214,14 @@
             transition: all 0.1s ease;
         }
 
+        .submit-btn:disabled {
+            background: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+            filter: none;
+        }
+
         /* ================= 底部切换文字 ================= */
         .toggle-text {
             margin-top: 25px;
@@ -198,94 +234,45 @@
             transition: color 0.3s ease;
         }
 
-        .toggle-text:hover {
-            color: #9d7dfa;
-            text-decoration: underline;
-        }
+        .toggle-text:hover { color: #9d7dfa; text-decoration: underline; }
 
         /* ================= 自定义弹窗 ================= */
         .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
+            backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+            z-index: 9999; display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
 
-        .modal-overlay.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
 
         .modal-box {
             background: rgba(255, 255, 255, 0.85);
             border: 1px solid rgba(255, 255, 255, 0.9);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-            border-radius: 24px;
-            padding: 30px 25px;
-            width: 80%;
-            max-width: 320px;
-            text-align: center;
-            transform: scale(0.85);
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-radius: 24px; padding: 30px 25px;
+            width: 80%; max-width: 320px; text-align: center;
+            transform: scale(0.85); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .modal-overlay.show .modal-box {
-            transform: scale(1);
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #444;
-            margin-bottom: 12px;
-        }
-
-        .modal-msg {
-            font-size: 15px;
-            color: #666;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-        }
+        .modal-overlay.show .modal-box { transform: scale(1); }
+        .modal-title { font-size: 18px; font-weight: 700; color: #444; margin-bottom: 12px; }
+        .modal-msg { font-size: 15px; color: #666; margin-bottom: 25px; line-height: 1.5; }
+        .modal-actions { display: flex; gap: 15px; justify-content: center; }
 
         .modal-btn {
-            flex: 1;
-            padding: 10px 0;
-            border-radius: 15px;
-            border: none;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            flex: 1; padding: 10px 0; border-radius: 15px; border: none;
+            font-size: 15px; font-weight: bold; cursor: pointer; transition: all 0.2s ease;
         }
 
         .modal-btn-confirm {
-            background: linear-gradient(135deg, #ff7eb3 0%, #9d7dfa 100%);
-            color: white;
+            background: linear-gradient(135deg, #ff7eb3 0%, #9d7dfa 100%); color: white;
             box-shadow: 0 4px 15px rgba(157, 125, 250, 0.3);
         }
 
-        .modal-btn-confirm:hover {
-            filter: brightness(1.1);
-            transform: translateY(-2px);
-        }
-
-        .modal-btn:active {
-            transform: scale(0.95);
-        }
+        .modal-btn-confirm:hover { filter: brightness(1.1); transform: translateY(-2px); }
+        .modal-btn:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
@@ -310,6 +297,13 @@
         <input type="password" id="inp-password" class="custom-input" placeholder="请输入密码">
     </div>
 
+    <div class="password-hint" id="pwd-hint">
+        <span class="hint-item" id="hint-len">至少8个字符</span>
+        <span class="hint-item" id="hint-letter">包含字母 (a-z, A-Z)</span>
+        <span class="hint-item" id="hint-num">包含数字 (0-9)</span>
+        <span class="hint-item" id="hint-sym">包含符号 (如 !@#$%)</span>
+    </div>
+
     <button class="submit-btn" id="btn-submit">gogogo</button>
 </div>
 
@@ -330,6 +324,7 @@
     const API_AUTH = `${BASE_URL}/record/auth`;
 
     let isLoginMode = true;
+    let isPasswordValid = true; // 默认登录模式不校验，设为true
 
     const groupPhone = document.getElementById('group-phone');
     const inpUsername = document.getElementById('inp-username');
@@ -338,6 +333,14 @@
     const btnSubmit = document.getElementById('btn-submit');
     const btnToggle = document.getElementById('btn-toggle');
 
+    // 密码提示相关DOM
+    const pwdHintContainer = document.getElementById('pwd-hint');
+    const hintLen = document.getElementById('hint-len');
+    const hintLetter = document.getElementById('hint-letter');
+    const hintNum = document.getElementById('hint-num');
+    const hintSym = document.getElementById('hint-sym');
+
+    // 基础弹窗方法
     function showModal(message) {
         return new Promise((resolve) => {
             const overlay = document.getElementById('custom-modal');
@@ -357,6 +360,7 @@
         });
     }
 
+    // Cookie设置
     function setCookie(name, value, days = 30) {
         const date = new Date();
         date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
@@ -364,17 +368,54 @@
         document.cookie = name + "=" + value + ";" + expires + ";path=/";
     }
 
+    // 校验密码并更新UI
+    function validatePassword(pwd) {
+        // 如果是登录模式，不进行校验限制
+        if (isLoginMode) {
+            isPasswordValid = true;
+            return;
+        }
+
+        const hasLen = pwd.length >= 8;
+        const hasLetter = /[a-zA-Z]/.test(pwd);
+        const hasNum = /[0-9]/.test(pwd);
+        const hasSym = /[^a-zA-Z0-9\s]/.test(pwd); // 匹配非字母数字和空白的字符
+
+        // 更新实时清单UI
+        hintLen.className = `hint-item ${hasLen ? 'valid' : ''}`;
+        hintLetter.className = `hint-item ${hasLetter ? 'valid' : ''}`;
+        hintNum.className = `hint-item ${hasNum ? 'valid' : ''}`;
+        hintSym.className = `hint-item ${hasSym ? 'valid' : ''}`;
+
+        // 综合判断
+        isPasswordValid = hasLen && hasLetter && hasNum && hasSym;
+    }
+
+    // 监听密码输入事件
+    inpPassword.addEventListener('input', (e) => {
+        if (!isLoginMode) {
+            validatePassword(e.target.value);
+        }
+    });
+
+    // 切换登录/注册模式
     btnToggle.addEventListener('click', () => {
         isLoginMode = !isLoginMode;
 
         if (isLoginMode) {
+            // 登录模式 UI
             groupPhone.classList.add('hidden');
+            pwdHintContainer.classList.remove('show'); // 隐藏密码清单
             btnSubmit.innerText = 'gogogo';
             btnToggle.innerText = '没有账号，点击注册';
             btnSubmit.style.background = 'linear-gradient(135deg, #ff7eb3 0%, #9d7dfa 100%)';
             btnSubmit.style.boxShadow = '0 8px 25px rgba(157, 125, 250, 0.4)';
+            isPasswordValid = true; // 登录不校验复杂度
         } else {
+            // 注册模式 UI
             groupPhone.classList.remove('hidden');
+            pwdHintContainer.classList.add('show'); // 显示密码清单
+            validatePassword(inpPassword.value); // 立刻校验一次当前输入框内容
             btnSubmit.innerText = '注 册';
             btnToggle.innerText = '已有账号，点击登录';
             btnSubmit.style.background = 'linear-gradient(135deg, #17c3b2 0%, #43e97b 100%)';
@@ -382,6 +423,7 @@
         }
     });
 
+    // 提交按钮逻辑
     btnSubmit.addEventListener('click', async () => {
         const username = inpUsername.value.trim();
         const password = inpPassword.value.trim();
@@ -389,7 +431,12 @@
 
         if (!username) return showModal("用户名不能为空哦！");
         if (!password) return showModal("密码不能为空哦！");
-        if (!isLoginMode && !phone) return showModal("注册需要填写手机号哦！");
+
+        // 注册模式下的特殊校验拦截
+        if (!isLoginMode) {
+            if (!phone) return showModal("注册需要填写手机号哦！");
+            if (!isPasswordValid) return showModal("密码太简单啦，请参考输入框下方的提示修改一下哦！");
+        }
 
         const payload = { username, password };
         if (!isLoginMode) {
@@ -417,12 +464,8 @@
 
                     const successMsg = isLoginMode ? "欢迎回来，月月友！" : "注册成功，欢迎加入月月友！";
 
-                    // 等待用户点击弹窗的“我知道了”
                     await showModal(successMsg);
-
-                    // ✨ 这里直接执行跳转，前往主页面 index.html ✨
                     window.location.href = "index.html";
-
                 } else {
                     await showModal(resData.info || "操作失败，请重试");
                 }

@@ -12,12 +12,10 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RecordIndexResponseDTO {
+public class DataShowResponseDTO {
 
     //用户id
     private Long userId;
-    //记录id
-    private Long cycleId;
     //用户名
     private String userName;
     //头像
@@ -26,25 +24,21 @@ public class RecordIndexResponseDTO {
     private Integer avgCycleDays;
     //平均持续时间
     private Integer avgPeriodDays;
-    //预测开始时间，生理期内就是开始得时间
-    private Date PredictedStartTime;
-    //几天前或几天后来
-    private String comeDays;
-    //预测结束时间，生理期外就是上次结束时间
-    private Date PredictedEndTime;
-    //几天后或几天前走
-    private String goDays;
     //记录当前状态 0：在生理期内，1：不在生理期内
     private int status;
     //发生了什么记录标签
-    List<event> events;
-    //后期的ai健康分析
-    private String aiSuggestion;
+    List<CycleRecord> cycleRecords;
 
-    public class event {
-        //事件名称
-        String eventName;
-        //事件程度
-        String eventProdure;
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CycleRecord {
+        //周期记录id
+        private Long cycleId;
+        //开始时间
+        private Date startDate;
+        //结束时间
+        private Date endDate;
     }
 }

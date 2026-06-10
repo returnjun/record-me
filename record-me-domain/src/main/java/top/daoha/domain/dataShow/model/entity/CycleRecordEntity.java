@@ -1,4 +1,4 @@
-package top.daoha.domain.record.model.entity;
+package top.daoha.domain.dataShow.model.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class NowStatus {
+public class CycleRecordEntity {
     //用户id
     private Long userId;
     //记录id
