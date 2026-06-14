@@ -76,6 +76,9 @@
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; margin: 20px 20px 30px 20px; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 25px; display: flex; justify-content: space-between; padding: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); z-index: 100; }
         .nav-item { flex: 1; text-align: center; padding: 12px 0; border-radius: 20px; font-size: 15px; font-weight: 600; color: #888; cursor: pointer; transition: all 0.3s; }
         .nav-item.active { background: #f1e9ff; color: #9d7dfa; box-shadow: 0 2px 10px rgba(157, 125, 250, 0.15); }
+
+        /* 隐藏滚动条防止页面切换时发生像素级跳动 */
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
     </style>
 </head>
 <body>
@@ -132,7 +135,7 @@
 <div class="bottom-nav">
     <div class="nav-item" onclick="window.location.href='index.html'">主页</div>
     <div class="nav-item active" onclick="window.location.href='data.html'">数据</div>
-    <div class="nav-item" onclick="alert('个人中心正在建设中...🌸')">我的</div>
+    <div class="nav-item" onclick="window.location.href='mine.html'">我的</div>
 </div>
 
 <script>
