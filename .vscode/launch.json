@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Run record-me-app",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "top.daoha.Application",
+            "projectName": "record-me-app",
+            "args": "",
+            "vmArgs": "-Dspring.profiles.active=dev -Dfile.encoding=UTF-8",
+            "env": {
+                "JAVA_HOME": "D:\\jdk-17"
+            },
+            "console": "integratedTerminal",
+            "shortenCommandLine": "jarmanifest"
+        }
+    ]
+}

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.daoha.infrastructure.dao.IUserInfoDao">
+
+    <resultMap id="UserInfoMap" type="top.daoha.infrastructure.dao.po.UserInfo">
+        <id column="user_id" property="userId"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="avatar" property="avatar"/>
+        <result column="phone" property="phone"/>
+        <result column="birthday" property="birthday"/>
+        <result column="height" property="height"/>
+        <result column="weight" property="weight"/>
+        <result column="avg_cycle_days" property="avgCycleDays"/>
+        <result column="avg_period_days" property="avgPeriodDays"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="top.daoha.infrastructure.dao.po.UserInfo" useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO user_info(username, password, avatar, phone, birthday, height, weight)
+        VALUES(#{username}, #{password}, #{avatar}, #{phone}, #{birthday}, #{height}, #{weight})
+    </insert>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="UserInfoMap">
+        SELECT user_id, username, password, avatar, phone, birthday, height, weight,
+               avg_cycle_days, avg_period_days,
+               is_deleted, create_time, update_time
+        FROM user_info
+        WHERE user_id = #{userId} AND is_deleted = 0
+    </select>
+
+    <select id="selectByUsername" parameterType="java.lang.String" resultMap="UserInfoMap">
+        SELECT user_id, username, password, avatar, phone, birthday, height, weight,
+               avg_cycle_days, avg_period_days,
+               is_deleted, create_time, update_time
+        FROM user_info
+        WHERE username = #{username} AND is_deleted = 0
+    </select>
+
+    <select id="selectList" parameterType="top.daoha.infrastructure.dao.po.UserInfo" resultMap="UserInfoMap">
+        SELECT user_id, username, password, avatar, phone, birthday, height, weight,
+               avg_cycle_days, avg_period_days,
+               is_deleted, create_time, update_time
+        FROM user_info
+        WHERE is_deleted = 0
+    </select>
+
+    <update id="updateById" parameterType="top.daoha.infrastructure.dao.po.UserInfo">
+        UPDATE user_info
+        <set>
+            <if test="username != null">username = #{username},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="birthday != null">birthday = #{birthday},</if>
+            <if test="height != null">height = #{height},</if>
+            <if test="weight != null">weight = #{weight},</if>
+            <if test="avgCycleDays != null">avg_cycle_days = #{avgCycleDays},</if>
+            <if test="avgPeriodDays != null">avg_period_days = #{avgPeriodDays},</if>
+        </set>
+        WHERE user_id = #{userId} AND is_deleted = 0
+    </update>
+
+    <update id="deleteById" parameterType="java.lang.Long">
+        UPDATE user_info SET is_deleted = 1 WHERE user_id = #{userId}
+    </update>
+
+</mapper>

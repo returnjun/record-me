@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="record-me-types" />
+        <module name="record-me-infrastructure" />
+        <module name="record-me-trigger" />
+        <module name="record-me-api" />
+        <module name="record-me-app" />
+        <module name="record-me-domain" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="record-me" options="-parameters" />
+      <module name="record-me-api" options="-parameters" />
+      <module name="record-me-app" options="-parameters" />
+      <module name="record-me-domain" options="-parameters" />
+      <module name="record-me-infrastructure" options="-parameters" />
+      <module name="record-me-trigger" options="-parameters" />
+      <module name="record-me-types" options="-parameters" />
+    </option>
+  </component>
+</project>

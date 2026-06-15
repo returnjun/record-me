@@ -1,0 +1,18 @@
+{
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.debug.settings.onBuildFailureProceed": true,
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.jdt.ls.java.home": "D:\\jdk-17",
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-17",
+            "path": "D:\\jdk-17",
+            "default": true
+        }
+    ],
+    "maven.executable.path": "C:\\web\\apache-maven-3.6.1\\bin\\mvn.cmd",
+    "terminal.integrated.env.windows": {
+        "JAVA_HOME": "D:\\jdk-17",
+        "PATH": "D:\\jdk-17\\bin;${env:PATH}"
+    }
+}

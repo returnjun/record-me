@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.daoha.infrastructure.dao.IDailySymptomDao">
+
+    <resultMap id="DailySymptomMap" type="top.daoha.infrastructure.dao.po.DailySymptom">
+        <id column="record_id" property="recordId"/>
+        <result column="cycle_id" property="cycleId"/>
+        <result column="user_id" property="userId"/>
+        <result column="record_date" property="recordDate"/>
+        <result column="flow_level" property="flowLevel"/>
+        <result column="pain_level" property="painLevel"/>
+        <result column="mood" property="mood"/>
+        <result column="notes" property="notes"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="top.daoha.infrastructure.dao.po.DailySymptom" useGeneratedKeys="true" keyProperty="recordId">
+        INSERT INTO daily_symptom(cycle_id, user_id, record_date, flow_level, pain_level, mood, notes)
+        VALUES(#{cycleId}, #{userId}, #{recordDate}, #{flowLevel}, #{painLevel}, #{mood}, #{notes})
+    </insert>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="DailySymptomMap">
+        SELECT record_id, cycle_id, user_id, record_date, flow_level, pain_level, mood, notes,
+               is_deleted, create_time, update_time
+        FROM daily_symptom
+        WHERE record_id = #{recordId} AND is_deleted = 0
+    </select>
+
+    <select id="selectByCycleId" parameterType="java.lang.Long" resultMap="DailySymptomMap">
+        SELECT record_id, cycle_id, user_id, record_date, flow_level, pain_level, mood, notes,
+               is_deleted, create_time, update_time
+        FROM daily_symptom
+        WHERE cycle_id = #{cycleId} AND is_deleted = 0
+        ORDER BY record_date ASC
+    </select>
+
+    <select id="selectByUserIdAndDate" resultMap="DailySymptomMap">
+        SELECT record_id, cycle_id, user_id, record_date, flow_level, pain_level, mood, notes,
+               is_deleted, create_time, update_time
+        FROM daily_symptom
+        WHERE user_id = #{userId} AND record_date = #{recordDate} AND is_deleted = 0
+    </select>
+
+    <select id="selectByCycleIdAndDate" resultMap="DailySymptomMap">
+        SELECT record_id, cycle_id, user_id, record_date, flow_level, pain_level, mood, notes,
+               is_deleted, create_time, update_time
+        FROM daily_symptom
+        WHERE cycle_id = #{cycleId} AND record_date = #{recordDate} AND is_deleted = 0
+    </select>
+
+    <update id="updateById" parameterType="top.daoha.infrastructure.dao.po.DailySymptom">
+        UPDATE daily_symptom
+        <set>
+            <if test="flowLevel != null">flow_level = #{flowLevel},</if>
+            <if test="painLevel != null">pain_level = #{painLevel},</if>
+            <if test="mood != null">mood = #{mood},</if>
+            <if test="notes != null">notes = #{notes},</if>
+        </set>
+        WHERE user_id = #{userId} and cycle_id = #{cycleId} AND is_deleted = 0
+    </update>
+
+    <update id="deleteById" parameterType="java.lang.Long">
+        UPDATE daily_symptom SET is_deleted = 1 WHERE record_id = #{recordId}
+    </update>
+
+</mapper>

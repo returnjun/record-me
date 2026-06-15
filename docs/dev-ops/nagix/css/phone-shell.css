@@ -1,0 +1,52 @@
+:root {
+    --phone-shell-width: 430px;
+    --phone-nav-width: 390px;
+}
+
+html {
+    min-height: 100%;
+    background:
+        radial-gradient(circle at 20% 10%, rgba(255, 126, 179, 0.18), transparent 28%),
+        radial-gradient(circle at 82% 22%, rgba(107, 227, 233, 0.18), transparent 30%),
+        linear-gradient(135deg, #f8f5ff 0%, #eef8ff 45%, #fff7fb 100%);
+}
+
+body {
+    width: 100%;
+    max-width: var(--phone-shell-width);
+    min-height: 100vh;
+    min-height: 100dvh;
+    margin: 0 auto;
+    position: relative;
+    isolation: isolate;
+}
+
+.bottom-nav {
+    left: 50%;
+    right: auto;
+    width: min(calc(100vw - 40px), var(--phone-nav-width));
+    max-width: var(--phone-nav-width);
+    transform: translateX(-50%);
+}
+
+.modal-overlay {
+    left: 50%;
+    right: auto;
+    width: min(100vw, var(--phone-shell-width));
+    transform: translateX(-50%);
+}
+
+@media (min-width: 481px) {
+    body {
+        box-shadow:
+            0 0 0 1px rgba(255, 255, 255, 0.92),
+            0 28px 70px rgba(90, 90, 130, 0.18);
+    }
+}
+
+@media (max-width: 430px) {
+    body {
+        max-width: none;
+        box-shadow: none;
+    }
+}

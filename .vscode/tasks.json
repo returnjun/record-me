@@ -1,0 +1,48 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Maven: package record-me-app",
+            "type": "shell",
+            "command": "mvn",
+            "args": [
+                "-pl",
+                "record-me-app",
+                "-am",
+                "clean",
+                "package",
+                "-DskipTests"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "JAVA_HOME": "D:\\jdk-17",
+                    "PATH": "D:\\jdk-17\\bin;${env:PATH}"
+                }
+            },
+            "group": "build",
+            "problemMatcher": "$maven"
+        },
+        {
+            "label": "Maven: spring-boot run record-me-app",
+            "type": "shell",
+            "command": "mvn",
+            "args": [
+                "-pl",
+                "record-me-app",
+                "-am",
+                "spring-boot:run",
+                "-Dspring-boot.run.profiles=dev"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "JAVA_HOME": "D:\\jdk-17",
+                    "PATH": "D:\\jdk-17\\bin;${env:PATH}"
+                }
+            },
+            "isBackground": true,
+            "problemMatcher": []
+        }
+    ]
+}

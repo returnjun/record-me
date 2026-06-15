@@ -1,0 +1,161 @@
+26-06-02.17:58:37.178 [main            ] INFO  Application            - Starting Application using Java 17 on jjnice with PID 28024 (D:\自学\java学习\记录系统\record-me\record-me-app\target\classes started by 24209 in D:\自学\java学习\记录系统\record-me)
+26-06-02.17:58:37.179 [main            ] INFO  Application            - The following 1 profile is active: "dev"
+26-06-02.17:58:38.184 [main            ] INFO  TomcatWebServer        - Tomcat initialized with port(s): 8088 (http)
+26-06-02.17:58:38.193 [main            ] INFO  Http11NioProtocol      - Initializing ProtocolHandler ["http-nio-8088"]
+26-06-02.17:58:38.193 [main            ] INFO  StandardService        - Starting service [Tomcat]
+26-06-02.17:58:38.193 [main            ] INFO  StandardEngine         - Starting Servlet engine: [Apache Tomcat/9.0.75]
+26-06-02.17:58:38.292 [main            ] INFO  [/]                    - Initializing Spring embedded WebApplicationContext
+26-06-02.17:58:38.293 [main            ] INFO  ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1072 ms
+26-06-02.17:58:39.019 [main            ] INFO  EndpointLinksResolver  - Exposing 1 endpoint(s) beneath base path '/actuator'
+26-06-02.17:58:39.038 [main            ] INFO  Http11NioProtocol      - Starting ProtocolHandler ["http-nio-8088"]
+26-06-02.17:58:39.055 [main            ] INFO  TomcatWebServer        - Tomcat started on port(s): 8088 (http) with context path ''
+26-06-02.17:58:39.067 [main            ] INFO  Application            - Started Application in 2.34 seconds (JVM running for 2.864)
+26-06-02.17:58:39.620 [RMI TCP Connection(1)-172.22.22.159] INFO  [/]                    - Initializing Spring DispatcherServlet 'dispatcherServlet'
+26-06-02.17:58:39.620 [RMI TCP Connection(1)-172.22.22.159] INFO  DispatcherServlet      - Initializing Servlet 'dispatcherServlet'
+26-06-02.17:58:39.621 [RMI TCP Connection(1)-172.22.22.159] INFO  DispatcherServlet      - Completed initialization in 1 ms
+26-06-02.17:58:39.629 [RMI TCP Connection(3)-172.22.22.159] INFO  HikariDataSource       - HikariPool-1 - Starting...
+26-06-02.17:58:39.888 [RMI TCP Connection(3)-172.22.22.159] INFO  HikariDataSource       - HikariPool-1 - Start completed.
+26-06-02.17:59:28.898 [http-nio-8088-exec-1] INFO  RecordIndexController  - 查询首页信息成功 userId=1
+26-06-02.18:00:15.528 [http-nio-8088-exec-2] INFO  RecordIndexController  - 查询首页信息成功 userId=1
+26-06-02.18:00:16.832 [http-nio-8088-exec-3] INFO  RecordIndexController  - 查询首页信息成功 userId=1
+26-06-02.18:01:30.750 [http-nio-8088-exec-5] INFO  RecordIndexController  - 查询首页信息成功 userId=2
+26-06-02.18:01:55.438 [SpringApplicationShutdownHook] INFO  HikariDataSource       - HikariPool-1 - Shutdown initiated...
+26-06-02.18:01:55.443 [SpringApplicationShutdownHook] INFO  HikariDataSource       - HikariPool-1 - Shutdown completed.
+26-06-02.18:23:55.113 [main            ] INFO  Application            - Starting Application using Java 17 on jjnice with PID 27312 (D:\自学\java学习\记录系统\record-me\record-me-app\target\classes started by 24209 in D:\自学\java学习\记录系统\record-me)
+26-06-02.18:23:55.115 [main            ] INFO  Application            - The following 1 profile is active: "dev"
+26-06-02.18:23:56.088 [main            ] INFO  TomcatWebServer        - Tomcat initialized with port(s): 8088 (http)
+26-06-02.18:23:56.097 [main            ] INFO  Http11NioProtocol      - Initializing ProtocolHandler ["http-nio-8088"]
+26-06-02.18:23:56.097 [main            ] INFO  StandardService        - Starting service [Tomcat]
+26-06-02.18:23:56.097 [main            ] INFO  StandardEngine         - Starting Servlet engine: [Apache Tomcat/9.0.75]
+26-06-02.18:23:56.186 [main            ] INFO  [/]                    - Initializing Spring embedded WebApplicationContext
+26-06-02.18:23:56.186 [main            ] INFO  ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1035 ms
+26-06-02.18:23:56.886 [main            ] INFO  EndpointLinksResolver  - Exposing 1 endpoint(s) beneath base path '/actuator'
+26-06-02.18:23:56.907 [main            ] INFO  Http11NioProtocol      - Starting ProtocolHandler ["http-nio-8088"]
+26-06-02.18:23:56.924 [main            ] INFO  TomcatWebServer        - Tomcat started on port(s): 8088 (http) with context path ''
+26-06-02.18:23:56.934 [main            ] INFO  Application            - Started Application in 2.25 seconds (JVM running for 2.762)
+26-06-02.18:23:57.373 [RMI TCP Connection(3)-172.22.22.159] INFO  HikariDataSource       - HikariPool-1 - Starting...
+26-06-02.18:23:57.383 [RMI TCP Connection(4)-172.22.22.159] INFO  [/]                    - Initializing Spring DispatcherServlet 'dispatcherServlet'
+26-06-02.18:23:57.383 [RMI TCP Connection(4)-172.22.22.159] INFO  DispatcherServlet      - Initializing Servlet 'dispatcherServlet'
+26-06-02.18:23:57.385 [RMI TCP Connection(4)-172.22.22.159] INFO  DispatcherServlet      - Completed initialization in 2 ms
+26-06-02.18:23:57.641 [RMI TCP Connection(3)-172.22.22.159] INFO  HikariDataSource       - HikariPool-1 - Start completed.
+26-06-02.18:23:59.641 [http-nio-8088-exec-1] INFO  RecordIndexController  - 查询首页信息成功 userId=1
+26-06-02.18:25:05.198 [SpringApplicationShutdownHook] INFO  HikariDataSource       - HikariPool-1 - Shutdown initiated...
+26-06-02.18:25:05.203 [SpringApplicationShutdownHook] INFO  HikariDataSource       - HikariPool-1 - Shutdown completed.
+26-06-02.18:25:15.289 [main            ] INFO  Application            - Starting Application using Java 17 on jjnice with PID 29476 (D:\自学\java学习\记录系统\record-me\record-me-app\target\classes started by 24209 in D:\自学\java学习\记录系统\record-me)
+26-06-02.18:25:15.292 [main            ] INFO  Application            - The following 1 profile is active: "dev"
+26-06-02.18:25:16.415 [main            ] INFO  TomcatWebServer        - Tomcat initialized with port(s): 8088 (http)
+26-06-02.18:25:16.425 [main            ] INFO  Http11NioProtocol      - Initializing ProtocolHandler ["http-nio-8088"]
+26-06-02.18:25:16.425 [main            ] INFO  StandardService        - Starting service [Tomcat]
+26-06-02.18:25:16.425 [main            ] INFO  StandardEngine         - Starting Servlet engine: [Apache Tomcat/9.0.75]
+26-06-02.18:25:16.535 [main            ] INFO  [/]                    - Initializing Spring embedded WebApplicationContext
+26-06-02.18:25:16.535 [main            ] INFO  ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1202 ms
+26-06-02.18:25:17.376 [main            ] INFO  EndpointLinksResolver  - Exposing 1 endpoint(s) beneath base path '/actuator'
+26-06-02.18:25:17.402 [main            ] INFO  Http11NioProtocol      - Starting ProtocolHandler ["http-nio-8088"]
+26-06-02.18:25:17.420 [main            ] INFO  TomcatWebServer        - Tomcat started on port(s): 8088 (http) with context path ''
+26-06-02.18:25:17.432 [main            ] INFO  Application            - Started Application in 2.623 seconds (JVM running for 3.873)
+26-06-02.18:25:17.702 [RMI TCP Connection(1)-172.22.22.159] INFO  [/]                    - Initializing Spring DispatcherServlet 'dispatcherServlet'
+26-06-02.18:25:17.702 [RMI TCP Connection(1)-172.22.22.159] INFO  DispatcherServlet      - Initializing Servlet 'dispatcherServlet'
+26-06-02.18:25:17.703 [RMI TCP Connection(1)-172.22.22.159] INFO  DispatcherServlet      - Completed initialization in 1 ms
+26-06-02.18:25:17.704 [RMI TCP Connection(3)-172.22.22.159] INFO  HikariDataSource       - HikariPool-1 - Starting...
+26-06-02.18:25:18.045 [RMI TCP Connection(3)-172.22.22.159] INFO  HikariDataSource       - HikariPool-1 - Start completed.
+26-06-02.18:27:07.420 [HikariPool-1 housekeeper] WARN  HikariPool             - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1m49s258ms509µs).
+26-06-02.18:27:07.483 [http-nio-8088-exec-1] INFO  RecordIndexController  - 查询首页信息成功 userId=1
+26-06-02.18:27:07.529 [SpringApplicationShutdownHook] INFO  HikariDataSource       - HikariPool-1 - Shutdown initiated...
+26-06-02.18:27:07.535 [SpringApplicationShutdownHook] INFO  HikariDataSource       - HikariPool-1 - Shutdown completed.
+26-06-02.18:27:40.322 [main            ] INFO  Application            - Starting Application using Java 17 on jjnice with PID 30028 (D:\自学\java学习\记录系统\record-me\record-me-app\target\classes started by 24209 in D:\自学\java学习\记录系统\record-me)
+26-06-02.18:27:40.324 [main            ] INFO  Application            - The following 1 profile is active: "dev"
+26-06-02.18:27:41.320 [main            ] INFO  TomcatWebServer        - Tomcat initialized with port(s): 8088 (http)
+26-06-02.18:27:41.330 [main            ] INFO  Http11NioProtocol      - Initializing ProtocolHandler ["http-nio-8088"]
+26-06-02.18:27:41.330 [main            ] INFO  StandardService        - Starting service [Tomcat]
+26-06-02.18:27:41.330 [main            ] INFO  StandardEngine         - Starting Servlet engine: [Apache Tomcat/9.0.75]
+26-06-02.18:27:41.430 [main            ] INFO  [/]                    - Initializing Spring embedded WebApplicationContext
+26-06-02.18:27:41.430 [main            ] INFO  ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1071 ms
+26-06-02.18:27:41.572 [main            ] WARN  AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'recordService': Injection of resource dependencies failed; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'top.daoha.domain.record.adapter.repository.IRecordRepository' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@javax.annotation.Resource(shareable=true, lookup="", name="", description="", authenticationType=CONTAINER, type=java.lang.Object.class, mappedName="")}
+26-06-02.18:27:41.575 [main            ] INFO  StandardService        - Stopping service [Tomcat]
+26-06-02.18:27:41.587 [main            ] INFO  ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+26-06-02.18:27:41.603 [main            ] ERROR LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+A component required a bean of type 'top.daoha.domain.record.adapter.repository.IRecordRepository' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'top.daoha.domain.record.adapter.repository.IRecordRepository' in your configuration.
+
+26-06-02.18:28:08.365 [main            ] INFO  Application            - Starting Application using Java 17 on jjnice with PID 2084 (D:\自学\java学习\记录系统\record-me\record-me-app\target\classes started by 24209 in D:\自学\java学习\记录系统\record-me)
+26-06-02.18:28:08.366 [main            ] INFO  Application            - The following 1 profile is active: "dev"
+26-06-02.18:28:09.255 [main            ] INFO  TomcatWebServer        - Tomcat initialized with port(s): 8088 (http)
+26-06-02.18:28:09.266 [main            ] INFO  Http11NioProtocol      - Initializing ProtocolHandler ["http-nio-8088"]
+26-06-02.18:28:09.267 [main            ] INFO  StandardService        - Starting service [Tomcat]
+26-06-02.18:28:09.267 [main            ] INFO  StandardEngine         - Starting Servlet engine: [Apache Tomcat/9.0.75]
+26-06-02.18:28:09.345 [main            ] INFO  [/]                    - Initializing Spring embedded WebApplicationContext
+26-06-02.18:28:09.345 [main            ] INFO  ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 945 ms
+26-06-02.18:28:09.473 [main            ] WARN  AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'recordService': Injection of resource dependencies failed; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'top.daoha.domain.record.adapter.repository.IRecordRepository' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@javax.annotation.Resource(shareable=true, lookup="", name="", description="", authenticationType=CONTAINER, type=java.lang.Object.class, mappedName="")}
+26-06-02.18:28:09.476 [main            ] INFO  StandardService        - Stopping service [Tomcat]
+26-06-02.18:28:09.487 [main            ] INFO  ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+26-06-02.18:28:09.502 [main            ] ERROR LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+A component required a bean of type 'top.daoha.domain.record.adapter.repository.IRecordRepository' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'top.daoha.domain.record.adapter.repository.IRecordRepository' in your configuration.
+
+26-06-02.18:29:49.418 [main            ] INFO  Application            - Starting Application using Java 17 on jjnice with PID 5324 (D:\自学\java学习\记录系统\record-me\record-me-app\target\classes started by 24209 in D:\自学\java学习\记录系统\record-me)
+26-06-02.18:29:49.421 [main            ] INFO  Application            - The following 1 profile is active: "dev"
+26-06-02.18:29:50.348 [main            ] INFO  TomcatWebServer        - Tomcat initialized with port(s): 8088 (http)
+26-06-02.18:29:50.356 [main            ] INFO  Http11NioProtocol      - Initializing ProtocolHandler ["http-nio-8088"]
+26-06-02.18:29:50.356 [main            ] INFO  StandardService        - Starting service [Tomcat]
+26-06-02.18:29:50.356 [main            ] INFO  StandardEngine         - Starting Servlet engine: [Apache Tomcat/9.0.75]
+26-06-02.18:29:50.436 [main            ] INFO  [/]                    - Initializing Spring embedded WebApplicationContext
+26-06-02.18:29:50.436 [main            ] INFO  ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 979 ms
+26-06-02.18:29:51.253 [main            ] INFO  EndpointLinksResolver  - Exposing 1 endpoint(s) beneath base path '/actuator'
+26-06-02.18:29:51.276 [main            ] INFO  Http11NioProtocol      - Starting ProtocolHandler ["http-nio-8088"]
+26-06-02.18:29:51.294 [main            ] INFO  TomcatWebServer        - Tomcat started on port(s): 8088 (http) with context path ''
+26-06-02.18:29:51.306 [main            ] INFO  Application            - Started Application in 2.264 seconds (JVM running for 2.712)
+26-06-02.18:29:51.792 [RMI TCP Connection(4)-172.22.22.159] INFO  [/]                    - Initializing Spring DispatcherServlet 'dispatcherServlet'
+26-06-02.18:29:51.793 [RMI TCP Connection(4)-172.22.22.159] INFO  DispatcherServlet      - Initializing Servlet 'dispatcherServlet'
+26-06-02.18:29:51.793 [RMI TCP Connection(4)-172.22.22.159] INFO  DispatcherServlet      - Completed initialization in 0 ms
+26-06-02.18:29:51.806 [RMI TCP Connection(6)-172.22.22.159] INFO  HikariDataSource       - HikariPool-1 - Starting...
+26-06-02.18:29:52.096 [RMI TCP Connection(6)-172.22.22.159] INFO  HikariDataSource       - HikariPool-1 - Start completed.
+26-06-02.18:30:00.499 [http-nio-8088-exec-1] INFO  RecordIndexController  - 查询首页信息成功 userId=1
+26-06-02.18:31:57.554 [http-nio-8088-exec-3] INFO  RecordIndexController  - 结束周期成功 userId=2
+26-06-02.18:32:18.855 [http-nio-8088-exec-4] INFO  RecordIndexController  - 开始新周期成功 userId=2
+26-06-02.21:10:55.460 [SpringApplicationShutdownHook] INFO  HikariDataSource       - HikariPool-1 - Shutdown initiated...
+26-06-02.21:10:55.465 [SpringApplicationShutdownHook] INFO  HikariDataSource       - HikariPool-1 - Shutdown completed.
+26-06-02.23:51:23.976 [main            ] INFO  Application            - Starting Application using Java 17 on jjnice with PID 22128 (D:\自学\java学习\记录系统\record-me\record-me-app\target\classes started by 24209 in D:\自学\java学习\记录系统\record-me)
+26-06-02.23:51:23.979 [main            ] INFO  Application            - The following 1 profile is active: "dev"
+26-06-02.23:51:24.951 [main            ] INFO  TomcatWebServer        - Tomcat initialized with port(s): 8088 (http)
+26-06-02.23:51:24.959 [main            ] INFO  Http11NioProtocol      - Initializing ProtocolHandler ["http-nio-8088"]
+26-06-02.23:51:24.959 [main            ] INFO  StandardService        - Starting service [Tomcat]
+26-06-02.23:51:24.959 [main            ] INFO  StandardEngine         - Starting Servlet engine: [Apache Tomcat/9.0.75]
+26-06-02.23:51:25.050 [main            ] INFO  [/]                    - Initializing Spring embedded WebApplicationContext
+26-06-02.23:51:25.050 [main            ] INFO  ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1034 ms
+26-06-02.23:51:25.893 [main            ] INFO  EndpointLinksResolver  - Exposing 1 endpoint(s) beneath base path '/actuator'
+26-06-02.23:51:25.914 [main            ] INFO  Http11NioProtocol      - Starting ProtocolHandler ["http-nio-8088"]
+26-06-02.23:51:25.929 [main            ] INFO  TomcatWebServer        - Tomcat started on port(s): 8088 (http) with context path ''
+26-06-02.23:51:25.940 [main            ] INFO  Application            - Started Application in 2.371 seconds (JVM running for 2.954)
+26-06-02.23:51:26.475 [RMI TCP Connection(1)-172.22.22.159] INFO  [/]                    - Initializing Spring DispatcherServlet 'dispatcherServlet'
+26-06-02.23:51:26.475 [RMI TCP Connection(1)-172.22.22.159] INFO  DispatcherServlet      - Initializing Servlet 'dispatcherServlet'
+26-06-02.23:51:26.475 [RMI TCP Connection(1)-172.22.22.159] INFO  DispatcherServlet      - Completed initialization in 0 ms
+26-06-02.23:51:26.477 [RMI TCP Connection(2)-172.22.22.159] INFO  HikariDataSource       - HikariPool-1 - Starting...
+26-06-02.23:51:26.800 [RMI TCP Connection(2)-172.22.22.159] INFO  HikariDataSource       - HikariPool-1 - Start completed.
+26-06-02.23:51:35.644 [SpringApplicationShutdownHook] INFO  HikariDataSource       - HikariPool-1 - Shutdown initiated...
+26-06-02.23:51:35.661 [SpringApplicationShutdownHook] INFO  HikariDataSource       - HikariPool-1 - Shutdown completed.
