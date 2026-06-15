@@ -4,176 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>我的 - 月月友</title>
-    <style>
-        /* ================= 全局样式与极光背景 ================= */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', sans-serif; }
-
-        body {
-            background: linear-gradient(120deg, #ffe2ed 0%, #eadaff 25%, #d4f7ff 50%, #e0fbf2 75%, #ffe2ed 100%);
-            background-size: 200% 200%; animation: auroraBreathe 12s ease infinite; color: #333;
-            min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden;
-        }
-
-        @keyframes auroraBreathe { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-
-        /* ================= 顶部栏样式 (严格对齐：先头像后名字) ================= */
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 25px 25px 15px 25px; }
-        .app-title { font-size: 22px; font-weight: 800; background: linear-gradient(90deg, #ff7eb3, #9d7dfa); -webkit-background-clip: text; color: transparent; letter-spacing: 2px; text-shadow: 0 4px 15px rgba(255,126,179,0.3); position: relative; }
-        .app-title::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 15px; height: 3px; background: #9d7dfa; border-radius: 2px; }
-
-        .header-controls { display: flex; align-items: center; gap: 15px; }
-
-        .ai-wallet-btn {
-            background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.7); padding: 6px 12px; border-radius: 16px; font-size: 13px; font-weight: bold; color: #9d7dfa; outline: none; cursor: pointer;
-            box-shadow: inset 0 1px 1px rgba(255,255,255,0.7), 0 4px 12px rgba(157, 125, 250, 0.1);
-            display: flex; align-items: center; gap: 4px; transition: all 0.3s ease;
-        }
-        .ai-wallet-btn:hover { background: rgba(255, 255, 255, 0.6); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(157, 125, 250, 0.2); }
-        .ai-wallet-btn:active { transform: scale(0.95); }
-
-        .avatar-container { display: flex; align-items: center; gap: 10px; cursor: pointer; transition: transform 0.2s; }
-        .avatar-container:active { transform: scale(0.95); }
-        .avatar { width: 42px; height: 42px; background: linear-gradient(135deg, #a1c4fd, #c2e9fb); background-size: cover; background-position: center; border-radius: 50%; border: 2px solid rgba(255,255,255,0.9); box-shadow: 0 4px 10px rgba(0,0,0,0.06); }
-        .username { font-size: 15px; font-weight: 800; color: #5c6280; letter-spacing: 0.5px; }
-
-        /* ================= 核心滚动卡片区 ================= */
-        .content-scroll { flex: 1; padding: 5px 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; padding-bottom: 110px; }
-
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.6); border-top: 1.5px solid rgba(255, 255, 255, 0.8); border-left: 1.5px solid rgba(255, 255, 255, 0.8);
-            border-radius: 24px; padding: 20px; box-shadow: inset 0 2px 5px rgba(255,255,255,0.4), 0 8px 30px rgba(162, 169, 255, 0.12);
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-        .glass-panel:hover { transform: translateY(-4px); background: rgba(255, 255, 255, 0.6); box-shadow: inset 0 2px 5px rgba(255,255,255,0.8), 0 15px 35px rgba(162, 169, 255, 0.2); border-color: rgba(255, 255, 255, 0.9); }
-
-        /* ================= 菜单部件组件 ================= */
-        .menu-section-title { font-size: 13px; font-weight: 800; color: #8390c1; margin-bottom: 15px; margin-left: 5px; letter-spacing: 1px; }
-        .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-
-        .menu-tile {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.02) 100%); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.3); border-top: 1.5px solid rgba(255, 255, 255, 0.8); border-left: 1.5px solid rgba(255, 255, 255, 0.8);
-            border-radius: 20px; padding: 15px 10px; aspect-ratio: 1 / 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px;
-            box-shadow: 0 8px 25px 0 rgba(131, 144, 193, 0.15); cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-        .menu-tile:hover { transform: translateY(-3px); background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.05) 100%); box-shadow: 0 12px 30px 0 rgba(157, 125, 250, 0.2); }
-        .menu-tile:active { transform: scale(0.95); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-
-        .tile-icon { width: 36px; height: 36px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .icon-blue { background: linear-gradient(135deg, #e0f0ff, #a1c4fd); color: #4a90e2; }
-        .icon-pink { background: linear-gradient(135deg, #ffe2ed, #ff7eb3); color: #d85a7d; }
-        .icon-purple { background: linear-gradient(135deg, #f1e9ff, #b8a4f5); color: #8e44ad; }
-        .icon-green { background: linear-gradient(135deg, #e0fbf2, #43e97b); color: #27ae60; }
-        .icon-orange { background: linear-gradient(135deg, #fff0e0, #ffb347); color: #e67e22; }
-        .icon-gray { background: linear-gradient(135deg, #f0f2f5, #d9e2ec); color: #7f8c8d; }
-
-        .tile-title { font-size: 12px; font-weight: 700; color: #5c6280; letter-spacing: 0.5px; }
-
-        /* ================= 底部服务链接 ================= */
-        .footer-links { margin-top: 10px; padding-top: 15px; border-top: 1px dashed rgba(157, 125, 250, 0.2); display: flex; flex-direction: column; gap: 10px; }
-        .footer-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 15px; border-radius: 16px; font-size: 13px; font-weight: 600; color: #5c6280;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.3); border-top: 1px solid rgba(255, 255, 255, 0.7); border-left: 1px solid rgba(255, 255, 255, 0.7);
-            cursor: pointer; transition: all 0.3s; box-shadow: 0 6px 20px rgba(131, 144, 193, 0.1);
-        }
-        .footer-item:hover { transform: translateX(4px); border-color: rgba(157, 125, 250, 0.4); }
-        .footer-detail { color: #9d7dfa; font-weight: 800; font-size: 13px;}
-
-        /* ================= 底部固定导航栏 ================= */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; margin: 15px 20px 25px 20px; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 25px; display: flex; justify-content: space-between; padding: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); z-index: 100; }
-        .nav-item { flex: 1; text-align: center; padding: 11px 0; border-radius: 20px; font-size: 14px; font-weight: 600; color: #888; cursor: pointer; transition: all 0.3s; }
-        .nav-item.active { background: #f1e9ff; color: #9d7dfa; box-shadow: 0 2px 10px rgba(157, 125, 250, 0.15); }
-        ::-webkit-scrollbar { width: 0px; background: transparent; }
-
-        /* ================= 统一弹窗基础样式 ================= */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(142, 153, 194, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
-        .modal-overlay.show { opacity: 1; pointer-events: auto; }
-        .glass-box { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(255, 255, 255, 0.9); box-shadow: 0 20px 50px rgba(131, 144, 193, 0.25); border-radius: 24px; padding: 25px 20px; width: 85%; max-width: 350px; transform: scale(0.85); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; display: flex; flex-direction: column;}
-        .modal-overlay.show .glass-box { transform: scale(1); }
-        .close-btn { position: absolute; top: 15px; right: 15px; font-size: 24px; color: #a9b5d6; cursor: pointer; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.2s; z-index: 2; }
-        .close-btn:hover { background: rgba(0,0,0,0.05); color: #ff7eb3; }
-        .modal-title { font-size: 18px; font-weight: 800; color: #5c6280; text-align: center; margin-bottom: 15px;}
-
-        .modal-msg { font-size: 15px; color: #666; margin-bottom: 25px; line-height: 1.5; text-align: center; }
-        .modal-actions { display: flex; gap: 15px; justify-content: center; margin-top: 15px;}
-        .modal-btn { flex: 1; padding: 12px 0; border-radius: 18px; border: none; font-size: 15px; font-weight: bold; cursor: pointer; transition: all 0.2s; }
-        .modal-btn-cancel { background: rgba(157, 125, 250, 0.1); color: #9d7dfa; }
-        .modal-btn-confirm { background: linear-gradient(135deg, #ff7eb3 0%, #9d7dfa 100%); color: white; box-shadow: 0 4px 15px rgba(157, 125, 250, 0.3); }
-        .modal-btn-confirm:active { transform: scale(0.95); }
-
-        /* ================= 玻璃质感表单 ================= */
-        .form-scroll-container { max-height: 55vh; overflow-y: auto; padding-right: 5px; margin-bottom: 10px; }
-        .avatar-edit-wrapper { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; cursor: pointer; }
-        .avatar-preview-lg { width: 75px; height: 75px; border-radius: 50%; background: linear-gradient(135deg, #a1c4fd, #c2e9fb); background-size: cover; background-position: center; border: 3px solid rgba(255,255,255,0.9); box-shadow: 0 6px 15px rgba(0,0,0,0.08); transition: transform 0.3s; }
-        .avatar-edit-wrapper:active .avatar-preview-lg { transform: scale(0.92); }
-        .avatar-edit-text { font-size: 12px; color: #8390c1; margin-top: 8px; font-weight: 600; background: rgba(255,255,255,0.6); padding: 4px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.8); }
-
-        .form-group { margin-bottom: 15px; display: flex; flex-direction: column; text-align: left; position: relative;}
-        .form-row { display: flex; gap: 15px; }
-        .form-row .half { flex: 1; }
-        .form-label { font-size: 13px; font-weight: 700; color: #5c6280; margin-bottom: 6px; padding-left: 4px; }
-        .form-label .unit { font-size: 11px; color: #a9b5d6; font-weight: normal; }
-
-        .glass-input { width: 100%; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); border: 1.5px solid rgba(255, 255, 255, 0.8); border-radius: 16px; padding: 12px 15px; font-size: 14px; font-weight: 600; color: #5c6280; outline: none; transition: all 0.3s ease; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); }
-        .glass-input::placeholder { color: #b5bdd6; font-weight: normal; }
-        .glass-input:focus { background: rgba(255, 255, 255, 0.9); border-color: #9d7dfa; box-shadow: 0 0 15px rgba(157, 125, 250, 0.2); }
-
-        .date-input-wrapper { position: relative; width: 100%; }
-        .date-input-wrapper::after { content: '📅'; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
-        .glass-input[type="date"] { appearance: none; -webkit-appearance: none; position: relative; z-index: 1; background: transparent; }
-        .glass-input[type="date"]::-webkit-calendar-picker-indicator { position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-
-        /* ================= 生理期管理 (严密计算的懒加载高度) ================= */
-        .cycle-manage-box { max-width: 350px; height: auto; padding-bottom: 20px;}
-
-        /* 核心修复：最大高度精确设定为 200px。
-           2个卡片高度约 168px。加上底部的 loading text (约30px)，总计近 200px。
-           这样一来，只要有 2 条数据，内容必然微小溢出，从而强制产生滚动条！ */
-        .cycle-list-container {
-            max-height: 200px;
-            overflow-y: auto;
-            padding: 5px;
-            margin-top: 10px;
-            display: flex;
-            flex-direction: column;
-        }
-        .cycle-list-container::-webkit-scrollbar { width: 0px; }
-
-        .cycle-cards-wrapper { display: flex; flex-direction: column; gap: 12px; }
-
-        .cycle-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.4) 100%);
-            border: 1px solid rgba(255,255,255,0.9); border-radius: 16px; padding: 15px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 15px rgba(157, 125, 250, 0.08); transition: transform 0.2s;
-            flex-shrink: 0; /* 防止卡片在小容器里被挤压变形 */
-        }
-        .cycle-card:hover { transform: translateY(-2px); border-color: #ff7eb3; }
-        .cycle-info { display: flex; flex-direction: column; gap: 4px; text-align: left;}
-        .cycle-id-tag { font-size: 11px; background: #f1e9ff; color: #9d7dfa; padding: 2px 8px; border-radius: 8px; width: fit-content; font-weight: bold;}
-        .cycle-dates { font-size: 14px; font-weight: 700; color: #5c6280; }
-        .cycle-dates span { color: #ff7eb3; }
-        .cycle-edit-btn { background: rgba(157, 125, 250, 0.1); color: #9d7dfa; border: none; padding: 6px 12px; border-radius: 12px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.2s; }
-        .cycle-edit-btn:active { transform: scale(0.9); background: #9d7dfa; color: white; }
-
-        /* Loading 文本必须在滚动容器内部的最底端 */
-        .loading-text { text-align: center; font-size: 12px; color: #a9b5d6; padding: 15px 0 5px 0; flex-shrink: 0;}
-
-    </style>
+    <link rel="stylesheet" href="css/mine.css">
+    <link rel="stylesheet" href="css/phone-shell.css">
+    <link rel="stylesheet" href="css/polish.css">
 </head>
 <body>
 
 <div class="header">
     <div class="app-title">我的</div>
     <div class="header-controls">
-        <div class="ai-wallet-btn" onclick="showDevModal('AI 充值中心')">
+        <div class="ai-wallet-btn" id="btn-ai-wallet" role="button" tabindex="0">
             <span>🔋</span> 充值
         </div>
-        <div class="avatar-container" onclick="openUserInfoModal()">
+        <div class="avatar-container" id="profile-entry" role="button" tabindex="0">
             <div class="avatar" id="user-avatar"></div>
             <div class="username" id="user-name">加载中...</div>
         </div>
@@ -184,19 +27,19 @@
     <div class="glass-panel">
         <div class="menu-section-title">专属档案</div>
         <div class="menu-grid">
-            <div class="menu-tile" onclick="openUserInfoModal()">
+            <div class="menu-tile" data-action="user-info" role="button" tabindex="0">
                 <div class="tile-icon icon-blue">👤</div>
                 <div class="tile-title">用户信息</div>
             </div>
-            <div class="menu-tile" onclick="showDevModal('人物画像')">
+            <div class="menu-tile" data-dev-feature="人物画像" role="button" tabindex="0">
                 <div class="tile-icon icon-pink">✨</div>
                 <div class="tile-title">人物画像</div>
             </div>
-            <div class="menu-tile" onclick="openCycleManagerModal()">
+            <div class="menu-tile" data-action="cycle-manager" role="button" tabindex="0">
                 <div class="tile-icon icon-purple">📅</div>
                 <div class="tile-title">生理期管理</div>
             </div>
-            <div class="menu-tile" onclick="showDevModal('个人资产')">
+            <div class="menu-tile" data-dev-feature="个人资产" role="button" tabindex="0">
                 <div class="tile-icon icon-green">💰</div>
                 <div class="tile-title">个人资产</div>
             </div>
@@ -206,11 +49,11 @@
     <div class="glass-panel">
         <div class="menu-section-title">系统与服务</div>
         <div class="menu-grid">
-            <div class="menu-tile" onclick="showDevModal('提醒设置')">
+            <div class="menu-tile" data-dev-feature="提醒设置" role="button" tabindex="0">
                 <div class="tile-icon icon-orange">🔔</div>
                 <div class="tile-title">提醒设置</div>
             </div>
-            <div class="menu-tile" onclick="showDevModal('通用设置')">
+            <div class="menu-tile" data-dev-feature="通用设置" role="button" tabindex="0">
                 <div class="tile-icon icon-gray">⚙️</div>
                 <div class="tile-title">通用设置</div>
             </div>
@@ -219,11 +62,11 @@
 
     <div class="glass-panel">
         <div class="footer-links">
-            <div class="footer-item" onclick="window.location.href='tel:17585345154'">
+            <div class="footer-item" data-href="tel:17585345154" role="button" tabindex="0">
                 <span>💬 意见反馈</span>
                 <span class="footer-detail">17585345154</span>
             </div>
-            <div class="footer-item" onclick="showModalMsg('月月友：懂你的健康守护者\n当前版本：v1.0.0', true)">
+            <div class="footer-item" id="about-link" role="button" tabindex="0">
                 <span>✨ 关于我们</span>
                 <span class="footer-detail">v1.0.0</span>
             </div>
@@ -232,14 +75,14 @@
 </div>
 
 <div class="bottom-nav">
-    <div class="nav-item" onclick="window.location.href='index.html'">主页</div>
-    <div class="nav-item" onclick="window.location.href='data.html'">数据</div>
+    <div class="nav-item" data-href="index.html" role="button" tabindex="0">主页</div>
+    <div class="nav-item" data-href="data.html" role="button" tabindex="0">数据</div>
     <div class="nav-item active">我的</div>
 </div>
 
 <div class="modal-overlay" id="user-info-modal">
     <div class="glass-box">
-        <div class="close-btn" onclick="closeModal('user-info-modal')">×</div>
+        <div class="close-btn" data-close="user-info-modal" role="button" tabindex="0">×</div>
         <div class="modal-title">专属档案设置</div>
 
         <div class="form-scroll-container">
@@ -261,8 +104,8 @@
             <div class="form-group">
                 <label class="form-label">生日 🎂</label>
                 <div class="date-input-wrapper">
-                    <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(255, 255, 255, 0.5); border: 1.5px solid rgba(255, 255, 255, 0.8); border-radius: 16px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); z-index: 0;"></div>
-                    <input type="date" id="edit-birthday" class="glass-input" style="padding-right: 40px; border:none; background:transparent;">
+                    <div class="date-input-backdrop date-input-backdrop-shadow"></div>
+                    <input type="date" id="edit-birthday" class="glass-input date-glass-input">
                 </div>
             </div>
 
@@ -277,16 +120,16 @@
                 </div>
             </div>
         </div>
-        <button class="modal-btn modal-btn-confirm" style="width: 100%; padding: 14px 0;" onclick="submitUserInfo()">保存档案</button>
+        <button class="modal-btn modal-btn-confirm modal-submit-btn" id="btn-submit-user-info">保存档案</button>
     </div>
 </div>
 
 <div class="modal-overlay" id="cycle-manage-modal">
     <div class="glass-box cycle-manage-box">
-        <div class="close-btn" onclick="closeModal('cycle-manage-modal')">×</div>
-        <div class="modal-title" style="margin-bottom: 5px;">历史周期管理</div>
+        <div class="close-btn" data-close="cycle-manage-modal" role="button" tabindex="0">×</div>
+        <div class="modal-title modal-title-tight">历史周期管理</div>
 
-        <div id="cycle-list-container" class="cycle-list-container" onscroll="handleLazyLoad(this)">
+        <div id="cycle-list-container" class="cycle-list-container">
             <div class="cycle-cards-wrapper" id="cycle-cards-wrapper">
             </div>
             <div class="loading-text" id="cycle-loading-text">向下滑动加载更多...</div>
@@ -295,32 +138,32 @@
 </div>
 
 <div class="modal-overlay" id="cycle-edit-modal">
-    <div class="glass-box" style="z-index: 10001; max-width: 320px;">
-        <div class="close-btn" onclick="closeModal('cycle-edit-modal')">×</div>
+    <div class="glass-box cycle-edit-box">
+        <div class="close-btn" data-close="cycle-edit-modal" role="button" tabindex="0">×</div>
         <div class="modal-title">修改周期区间</div>
 
         <input type="hidden" id="edit-cycle-id">
         <div class="form-group">
             <label class="form-label">开始时间 🟢</label>
             <div class="date-input-wrapper">
-                <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(255, 255, 255, 0.5); border: 1.5px solid rgba(255, 255, 255, 0.8); border-radius: 16px; z-index: 0;"></div>
-                <input type="date" id="edit-cycle-start" class="glass-input" style="padding-right: 40px; border:none; background:transparent;">
+                <div class="date-input-backdrop"></div>
+                <input type="date" id="edit-cycle-start" class="glass-input date-glass-input">
             </div>
         </div>
         <div class="form-group">
             <label class="form-label">结束时间 🔴</label>
             <div class="date-input-wrapper">
-                <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(255, 255, 255, 0.5); border: 1.5px solid rgba(255, 255, 255, 0.8); border-radius: 16px; z-index: 0;"></div>
-                <input type="date" id="edit-cycle-end" class="glass-input" style="padding-right: 40px; border:none; background:transparent;">
+                <div class="date-input-backdrop"></div>
+                <input type="date" id="edit-cycle-end" class="glass-input date-glass-input">
             </div>
         </div>
 
-        <button class="modal-btn modal-btn-confirm" style="width: 100%; padding: 14px 0;" onclick="confirmCycleEdit()">确认修改</button>
+        <button class="modal-btn modal-btn-confirm modal-submit-btn" id="btn-confirm-cycle-edit">确认修改</button>
     </div>
 </div>
 
-<div class="modal-overlay" id="custom-modal" style="z-index: 10002;">
-    <div class="glass-box" style="max-width: 300px;">
+<div class="modal-overlay custom-modal-overlay" id="custom-modal">
+    <div class="glass-box custom-modal-box">
         <div class="modal-title">提示</div>
         <div class="modal-msg" id="modal-msg">确认操作吗？</div>
         <div class="modal-actions">
@@ -329,257 +172,7 @@
         </div>
     </div>
 </div>
-
-<script>
-    // --- 基础工具 ---
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
-        return null;
-    }
-
-    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
-
-    function showModalMsg(message, isAlert = false) {
-        return new Promise((resolve) => {
-            const overlay = document.getElementById('custom-modal');
-            const msgEl = document.getElementById('modal-msg');
-            const btnCancel = document.getElementById('modal-cancel');
-            const btnConfirm = document.getElementById('modal-confirm');
-
-            msgEl.innerText = message;
-            btnCancel.style.display = isAlert ? 'none' : 'block';
-            btnConfirm.innerText = isAlert ? '我知道了' : '确认';
-            overlay.classList.add('show');
-
-            const cleanup = () => {
-                overlay.classList.remove('show');
-                btnConfirm.removeEventListener('click', onConfirm);
-                btnCancel.removeEventListener('click', onCancel);
-            };
-            const onConfirm = () => { cleanup(); resolve(true); };
-            const onCancel = () => { cleanup(); resolve(false); };
-
-            btnConfirm.addEventListener('click', onConfirm);
-            btnCancel.addEventListener('click', onCancel);
-        });
-    }
-
-    function showDevModal(featureName) {
-        showModalMsg(`🌸 【${featureName}】正在由程序员熬夜开发中\n敬请期待下个版本！`, true);
-    }
-
-    // --- 全局变量 ---
-    let USER_ID = getCookie('userId') ? parseInt(getCookie('userId'), 10) : 1;
-    let currentUserData = { username: "加载中...", avatarSeed: "user" };
-
-    const fmtDate = (dateStr) => dateStr ? dateStr.split('T')[0] : "";
-
-    document.addEventListener("DOMContentLoaded", () => {
-        fetchUserInfo();
-    });
-
-    // ================= 模块一：用户信息管理 =================
-    async function fetchUserInfo() {
-        try {
-            const res = await fetch('http://127.0.0.1:8088/record/mine/getUsrInfo', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: USER_ID })
-            });
-            const json = await res.json();
-            if (json.code === "0000" && json.data) {
-                currentUserData = json.data;
-                document.getElementById('user-name').innerText = currentUserData.username;
-
-                if(currentUserData.avatar && currentUserData.avatar.trim() !== "") {
-                    document.getElementById('user-avatar').style.backgroundImage = `url('${currentUserData.avatar}')`;
-                    try {
-                        const urlParams = new URLSearchParams(currentUserData.avatar.split('?')[1]);
-                        currentUserData.avatarSeed = urlParams.get('seed') || currentUserData.username;
-                    } catch(e) { currentUserData.avatarSeed = currentUserData.username; }
-                } else {
-                    const seed = currentUserData.username || "user";
-                    document.getElementById('user-avatar').style.backgroundImage = `url('https://api.dicebear.com/7.x/adventurer/svg?seed=${seed}')`;
-                    currentUserData.avatarSeed = seed;
-                }
-            }
-        } catch (error) { console.error("拉取用户信息失败", error); }
-    }
-
-    function openUserInfoModal() {
-        document.getElementById('edit-username').value = currentUserData.username || "";
-        document.getElementById('edit-phone').value = currentUserData.phone || "";
-        document.getElementById('edit-birthday').value = fmtDate(currentUserData.birthday) || "";
-        document.getElementById('edit-height').value = currentUserData.height || "";
-        document.getElementById('edit-weight').value = currentUserData.weight || "";
-        updatePreviewAvatar(currentUserData.avatarSeed);
-        document.getElementById('user-info-modal').classList.add('show');
-    }
-
-    document.getElementById('avatar-random-btn').addEventListener('click', () => {
-        const randomSeed = Math.random().toString(36).substring(7);
-        currentUserData.avatarSeed = randomSeed;
-        updatePreviewAvatar(randomSeed);
-    });
-
-    function updatePreviewAvatar(seed) {
-        document.getElementById('edit-avatar-preview').style.backgroundImage = `url('https://api.dicebear.com/7.x/adventurer/svg?seed=${seed}')`;
-    }
-
-    async function submitUserInfo() {
-        const payload = {
-            userId: USER_ID,
-            username: document.getElementById('edit-username').value.trim(),
-            avatar: `https://api.dicebear.com/7.x/adventurer/svg?seed=${currentUserData.avatarSeed}`,
-            phone: document.getElementById('edit-phone').value.trim(),
-            birthday: document.getElementById('edit-birthday').value || null,
-            height: parseFloat(document.getElementById('edit-height').value) || null,
-            weight: parseFloat(document.getElementById('edit-weight').value) || null
-        };
-
-        if (!payload.username) return showModalMsg("昵称不能为空哦！", true);
-
-        try {
-            const res = await fetch('http://127.0.0.1:8088/record/mine/changeUserInfo', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            const json = await res.json();
-            if (json.code === "0000") {
-                closeModal('user-info-modal');
-                fetchUserInfo();
-                showModalMsg("档案保存成功 🌸", true);
-            } else {
-                showModalMsg(json.info || "保存失败", true);
-            }
-        } catch (error) { showModalMsg("网络请求异常", true); }
-    }
-
-    // ================= 模块二：生理期管理 (分页懒加载：page/pageSize) =================
-    let cycleCurrentPage = 1;
-    let cyclePageSize = 2;
-    let totalRecordsCount = 0;
-    let isCycleLoading = false;
-    let hasMoreCycles = true;
-
-    function openCycleManagerModal() {
-        cycleCurrentPage = 1;
-        cyclePageSize = 2;
-        totalRecordsCount = 0;
-        hasMoreCycles = true;
-
-        document.getElementById('cycle-cards-wrapper').innerHTML = '';
-        document.getElementById('cycle-loading-text').innerText = "努力加载中...";
-        document.getElementById('cycle-list-container').scrollTop = 0;
-        document.getElementById('cycle-manage-modal').classList.add('show');
-
-        loadCycleRecords();
-    }
-
-    async function loadCycleRecords() {
-        if (isCycleLoading || !hasMoreCycles) return;
-
-        isCycleLoading = true;
-        const loadText = document.getElementById('cycle-loading-text');
-        loadText.innerText = "努力加载中...";
-
-        try {
-            const res = await fetch('http://127.0.0.1:8088/record/mine/getUserRecord', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: USER_ID, page: cycleCurrentPage, pageSize: cyclePageSize })
-            });
-            const json = await res.json();
-
-            if (json.code === "0000" && json.data) {
-                totalRecordsCount = json.data.recordsCount || 0;
-                const recordsArray = json.data.cycleRecords || [];
-
-                if (recordsArray.length > 0) {
-                    renderCycleCards(recordsArray);
-                    cycleCurrentPage++;
-                }
-
-                if (recordsArray.length < cyclePageSize) {
-                    hasMoreCycles = false;
-                    loadText.innerText = totalRecordsCount === 0 ? "暂无数据记录" : "已经到底啦~";
-                } else {
-                    loadText.innerText = "向下滑动加载更多...";
-                }
-            } else {
-                hasMoreCycles = false;
-                loadText.innerText = "暂无数据记录";
-            }
-        } catch (error) {
-            loadText.innerText = "加载失败，请检查网络";
-        } finally {
-            isCycleLoading = false;
-        }
-    }
-
-    function renderCycleCards(records) {
-        const container = document.getElementById('cycle-cards-wrapper');
-        records.forEach(rec => {
-            const start = fmtDate(rec.startDate) || "未知";
-            const end = fmtDate(rec.endDate) || "至今未走";
-
-            const card = document.createElement('div');
-            card.className = 'cycle-card';
-            card.innerHTML = `
-                <div class="cycle-info">
-                    <div class="cycle-id-tag">周期 #${rec.cycleId}</div>
-                    <div class="cycle-dates">起：<span>${start}</span></div>
-                    <div class="cycle-dates">止：<span>${end}</span></div>
-                </div>
-                <button class="cycle-edit-btn" onclick="openCycleEdit(${rec.cycleId}, '${start}', '${end}')">修改</button>
-            `;
-            container.appendChild(card);
-        });
-    }
-
-    function handleLazyLoad(element) {
-        // 当滚动到底部不足 20px 时触发下一批数据加载
-        if (element.scrollTop + element.clientHeight >= element.scrollHeight - 20) {
-            loadCycleRecords();
-        }
-    }
-
-    // ================= 模块三：单次周期编辑 =================
-    function openCycleEdit(cycleId, start, end) {
-        document.getElementById('edit-cycle-id').value = cycleId;
-        document.getElementById('edit-cycle-start').value = start !== "未知" ? start : "";
-        document.getElementById('edit-cycle-end').value = end !== "至今未走" ? end : "";
-        document.getElementById('cycle-edit-modal').classList.add('show');
-    }
-
-    async function confirmCycleEdit() {
-        const cycleId = document.getElementById('edit-cycle-id').value;
-        const start = document.getElementById('edit-cycle-start').value;
-        const end = document.getElementById('edit-cycle-end').value || null;
-
-        if (!start) return showModalMsg("必须填写开始时间哦！", true);
-
-        const isConfirm = await showModalMsg(`⚠️ 警告\n确定要修改周期 #${cycleId} 的数据吗？\n错误的修改会影响 AI 预测准确度哦！`);
-        if (!isConfirm) return;
-
-        try {
-            const res = await fetch('http://127.0.0.1:8088/record/mine/changeUserRecord', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cycleId: parseInt(cycleId), startDate: start, endDate: end })
-            });
-            const json = await res.json();
-
-            if (json.code === "0000" && json.data === true) {
-                closeModal('cycle-edit-modal');
-                showModalMsg("修改成功 🌸", true);
-                openCycleManagerModal(); // 刷新整个列表
-            } else {
-                showModalMsg(json.info || "修改失败，请重试", true);
-            }
-        } catch (error) {
-            showModalMsg("网络请求异常", true);
-        }
-    }
-</script>
+<script src="js/ui-enhance.js"></script>
+<script src="js/mine.js"></script>
 </body>
 </html>

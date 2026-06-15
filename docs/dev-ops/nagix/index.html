@@ -4,182 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>健康管理 - 月月友</title>
-    <style>
-        /* ================= 全局样式与极光背景复用 ================= */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', sans-serif; }
-
-        body {
-            background: linear-gradient(120deg, #ffe2ed 0%, #eadaff 25%, #d4f7ff 50%, #e0fbf2 75%, #ffe2ed 100%);
-            background-size: 200% 200%; animation: auroraBreathe 12s ease infinite; color: #333;
-            min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden;
-        }
-
-        @keyframes auroraBreathe { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-
-        /* ================= 顶部栏样式 ================= */
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 25px 25px 15px 25px; }
-        .app-title { font-size: 22px; font-weight: 800; background: linear-gradient(90deg, #ff7eb3, #9d7dfa); -webkit-background-clip: text; color: transparent; letter-spacing: 2px; text-shadow: 0 4px 15px rgba(255,126,179,0.3); position: relative; }
-        .app-title::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 15px; height: 3px; background: #9d7dfa; border-radius: 2px; }
-
-        .header-controls { display: flex; align-items: center; gap: 15px; }
-        .avatar-container { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .avatar { width: 42px; height: 42px; background: linear-gradient(135deg, #a1c4fd, #c2e9fb); background-size: cover; background-position: center; border-radius: 50%; border: 2px solid rgba(255,255,255,0.8); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .username { font-size: 15px; font-weight: 600; color: #555; }
-
-        /* ================= 核心滚动区与玻璃卡片 ================= */
-        .content-scroll { flex: 1; padding: 10px 20px 0 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; padding-bottom: 110px; }
-
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            border-top: 1.5px solid rgba(255, 255, 255, 0.8); /* 高光边框 */
-            border-left: 1.5px solid rgba(255, 255, 255, 0.8);
-            border-radius: 24px; padding: 20px;
-            box-shadow: inset 0 2px 5px rgba(255,255,255,0.4), 0 8px 30px rgba(162, 169, 255, 0.12);
-            position: relative;
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-
-        .glass-panel:hover {
-            transform: translateY(-4px);
-            background: rgba(255, 255, 255, 0.6);
-            box-shadow: inset 0 2px 5px rgba(255,255,255,0.8), 0 15px 35px rgba(162, 169, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.9);
-        }
-
-        .glass-panel.no-padding { padding: 0; overflow: hidden; }
-
-        /* ================= AI卡片特有样式 (修复遮挡) ================= */
-        .ai-card {
-            padding: 25px 20px;
-            text-align: center;
-            margin-top: 15px; /* 增加上边距，防止标签顶到上面 */
-            z-index: 10; /* 确保层级足够高 */
-        }
-        .ai-card::before {
-            content: '✨ AI 健康分析';
-            position: absolute;
-            top: -15px; /* 将标签向上移动，脱离边框 */
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(90deg, #ff7eb3, #b8a4f5, #6be3e9);
-            color: white;
-            padding: 4px 15px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
-            box-shadow: 0 4px 12px rgba(184, 164, 245, 0.4);
-            z-index: 11; /* 确保标签在卡片之上 */
-        }
-        .ai-text { font-size: 15px; color: #555; line-height: 1.6; font-weight: 600; }
-
-        /* ================= 治愈系动画容器 ================= */
-        .animation-container { height: 160px; width: 100%; }
-        #journeyCanvas { width: 100%; height: 100%; display: block; }
-
-        /* ================= 核心操作区 ================= */
-        .action-area { display: flex; justify-content: space-between; align-items: center; padding: 25px 15px; transition: all 0.5s ease; }
-        .action-area.reverse { flex-direction: row-reverse; }
-        .action-col { display: flex; flex-direction: column; align-items: center; gap: 15px; z-index: 2; }
-
-        .date-box {
-            background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px);
-            padding: 8px 16px; border-radius: 12px; font-size: 14px; font-weight: bold; color: #6a73a0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04); min-width: 90px; text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.9);
-        }
-        .circle-btn { width: 85px; height: 85px; border-radius: 50%; border: none; color: white; font-size: 24px; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.3s; }
-        .btn-come { background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%); box-shadow: 0 8px 25px rgba(255, 126, 179, 0.4); }
-        .btn-go { background: linear-gradient(135deg, #38f9d7 0%, #43e97b 100%); box-shadow: 0 8px 25px rgba(67, 233, 123, 0.4); }
-        .circle-btn:active { transform: scale(0.9) translateY(2px); box-shadow: 0 4px 10px rgba(0,0,0,0.15); filter: brightness(0.95); }
-
-        .center-col { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; height: 100%; z-index: 1; }
-        .cloud-btn {
-            background: rgba(255, 255, 255, 0.8); border: 1.5px solid rgba(255, 255, 255, 1); backdrop-filter: blur(8px);
-            padding: 8px 20px; border-radius: 20px; font-size: 13px; font-weight: 700; color: #8390c1;
-            box-shadow: 0 4px 15px rgba(131, 144, 193, 0.15); cursor: pointer; transition: all 0.3s;
-        }
-        .cloud-btn:active { transform: scale(0.95); }
-        .cloud-btn:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(131, 144, 193, 0.25); }
-
-        .arrow { width: 60px; height: 20px; background: linear-gradient(90deg, #ff7eb3, #43e97b); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20'%3E%3Cpath d='M0 10 L85 10 M85 0 L100 10 L85 20 Z' fill='none' stroke='black' stroke-width='4' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20'%3E%3Cpath d='M0 10 L85 10 M85 0 L100 10 L85 20 Z' fill='none' stroke='black' stroke-width='4' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat; animation: arrowFloat 2s ease-in-out infinite; }
-        @keyframes arrowFloat { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(3px); } }
-
-        /* ================= 底部固定导航栏 ================= */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; margin: 20px 20px 30px 20px; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.8); border-radius: 25px; display: flex; justify-content: space-between; padding: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); z-index: 100; }
-        .nav-item { flex: 1; text-align: center; padding: 12px 0; border-radius: 20px; font-size: 15px; font-weight: 600; color: #888; cursor: pointer; transition: all 0.3s; }
-        .nav-item.active { background: #f1e9ff; color: #9d7dfa; box-shadow: 0 2px 10px rgba(157, 125, 250, 0.15); }
-
-        ::-webkit-scrollbar { width: 0px; background: transparent; }
-
-        /* ================= 弹窗样式调整 ================= */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(142, 153, 194, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
-        .modal-overlay.show { opacity: 1; pointer-events: auto; }
-
-        .glass-box {
-            background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(255, 255, 255, 0.9);
-            box-shadow: 0 20px 50px rgba(131, 144, 193, 0.25); border-radius: 24px;
-            padding: 25px; width: 85%; max-width: 340px; transform: scale(0.85);
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative;
-        }
-        .modal-overlay.show .glass-box { transform: scale(1); }
-
-        .close-btn { position: absolute; top: 15px; right: 15px; font-size: 24px; color: #a9b5d6; cursor: pointer; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.2s; }
-        .close-btn:hover { background: rgba(0,0,0,0.05); color: #ff7eb3; }
-
-        .modal-title { font-size: 18px; font-weight: 800; color: #5c6280; margin-bottom: 20px; text-align: center; }
-        .modal-msg { font-size: 15px; color: #666; margin-bottom: 25px; line-height: 1.5; text-align: center; }
-        .modal-actions { display: flex; gap: 15px; justify-content: center; margin-top: 15px;}
-        .modal-btn { flex: 1; padding: 12px 0; border-radius: 18px; border: none; font-size: 15px; font-weight: bold; cursor: pointer; transition: all 0.2s; }
-        .modal-btn-cancel { background: rgba(157, 125, 250, 0.1); color: #9d7dfa; }
-        .modal-btn-confirm { background: linear-gradient(135deg, #ff7eb3 0%, #9d7dfa 100%); color: white; box-shadow: 0 4px 15px rgba(157, 125, 250, 0.3); }
-        .modal-btn-confirm:active { transform: scale(0.95); }
-
-        /* ================= 状态记录面板 ================= */
-        .symptom-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 25px; margin-top: 10px;}
-        .symptom-row {
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(157, 125, 250, 0.2);
-            border-radius: 20px; padding: 12px 15px 12px 20px; cursor: pointer; transition: all 0.3s;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-        }
-        .symptom-row:active { transform: scale(0.97); background: rgba(241, 233, 255, 0.8); border-color: #9d7dfa; }
-        .symptom-label { font-size: 15px; color: #5c6280; font-weight: 600; }
-        .symptom-val {
-            background: #f1e9ff; border: 1px solid transparent; border-radius: 16px;
-            padding: 6px 16px; font-size: 14px; color: #9d7dfa; font-weight: bold;
-            min-width: 70px; text-align: center; pointer-events: none;
-        }
-
-        .record-submit-btn {
-            width: 100%; background: linear-gradient(135deg, #38f9d7 0%, #43e97b 100%);
-            border: none; color: white; padding: 14px 0; border-radius: 20px;
-            font-size: 16px; font-weight: bold; cursor: pointer;
-            box-shadow: 0 8px 20px rgba(67, 233, 123, 0.3); transition: all 0.2s;
-        }
-        .record-submit-btn:active { transform: scale(0.95); box-shadow: 0 4px 10px rgba(67, 233, 123, 0.2); }
-
-        .options-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; padding: 10px 0; }
-        .option-btn {
-            background: rgba(255,255,255,0.7); border: 1.5px solid rgba(157, 125, 250, 0.3);
-            width: 75px; height: 50px; border-radius: 25px; display: flex; align-items: center; justify-content: center;
-            font-size: 14px; font-weight: 600; color: #5c6280; cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-        }
-        .option-btn:hover { transform: translateY(-2px); border-color: #ff7eb3; color: #ff7eb3; }
-        .option-btn.selected {
-            background: linear-gradient(135deg, #ff7eb3, #9d7dfa); border-color: transparent; color: white;
-            box-shadow: 0 6px 15px rgba(157, 125, 250, 0.4); transform: scale(1.05);
-        }
-
-        .note-input {
-            width: 100%; background: rgba(255,255,255,0.6); border: 1.5px solid rgba(157, 125, 250, 0.3);
-            border-radius: 20px; padding: 15px; font-size: 14px; color: #555; outline: none; resize: none;
-            height: 120px; margin-bottom: 5px; transition: all 0.3s;
-        }
-        .note-input:focus { border-color: #9d7dfa; background: rgba(255,255,255,0.9); box-shadow: 0 0 15px rgba(157, 125, 250, 0.15); }
-    </style>
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/phone-shell.css">
+    <link rel="stylesheet" href="css/polish.css">
 </head>
 <body>
 
@@ -222,9 +49,9 @@
 </div>
 
 <div class="bottom-nav">
-    <div class="nav-item active" onclick="window.location.href='index.html'">主页</div>
-    <div class="nav-item" onclick="window.location.href='data.html'">数据</div>
-    <div class="nav-item" onclick="window.location.href='mine.html'">我的</div>
+    <div class="nav-item active" data-href="index.html" role="button" tabindex="0">主页</div>
+    <div class="nav-item" data-href="data.html" role="button" tabindex="0">数据</div>
+    <div class="nav-item" data-href="mine.html" role="button" tabindex="0">我的</div>
 </div>
 
 <div class="modal-overlay" id="custom-modal">
@@ -240,33 +67,33 @@
 
 <div class="modal-overlay" id="symptom-record-modal">
     <div class="glass-box">
-        <div class="close-btn" onclick="closeModal('symptom-record-modal')">×</div>
-        <div class="modal-title" style="margin-bottom: 5px;">今日状态打卡</div>
+        <div class="close-btn" data-close="symptom-record-modal" role="button" tabindex="0">×</div>
+        <div class="modal-title modal-title-tight">今日状态打卡</div>
         <div class="symptom-list">
-            <div class="symptom-row" onclick="openSubModal('pain')">
+            <div class="symptom-row" data-symptom="pain" role="button" tabindex="0">
                 <span class="symptom-label">痛经程度</span>
                 <div class="symptom-val" id="val-pain">正常</div>
             </div>
-            <div class="symptom-row" onclick="openSubModal('flow')">
+            <div class="symptom-row" data-symptom="flow" role="button" tabindex="0">
                 <span class="symptom-label">流量大小</span>
                 <div class="symptom-val" id="val-flow">正常</div>
             </div>
-            <div class="symptom-row" onclick="openSubModal('mood')">
+            <div class="symptom-row" data-symptom="mood" role="button" tabindex="0">
                 <span class="symptom-label">心情状态</span>
                 <div class="symptom-val" id="val-mood">开心</div>
             </div>
-            <div class="symptom-row" onclick="openSubModal('note')">
+            <div class="symptom-row" data-symptom="note" role="button" tabindex="0">
                 <span class="symptom-label">额外备注</span>
-                <div class="symptom-val" id="val-note" style="max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: transparent; border: 1px solid #9d7dfa;">无</div>
+                <div class="symptom-val symptom-note-preview" id="val-note">无</div>
             </div>
         </div>
-        <button class="record-submit-btn" onclick="submitSymptomRecord()">记录完成</button>
+        <button class="record-submit-btn" id="btn-submit-symptom">记录完成</button>
     </div>
 </div>
 
 <div class="modal-overlay" id="symptom-options-modal">
-    <div class="glass-box" style="padding-top: 35px;">
-        <div class="close-btn" onclick="closeModal('symptom-options-modal')">×</div>
+    <div class="glass-box symptom-options-box">
+        <div class="close-btn" data-close="symptom-options-modal" role="button" tabindex="0">×</div>
         <div class="options-container" id="options-container">
         </div>
     </div>
@@ -277,300 +104,12 @@
         <div class="modal-title">写点悄悄话</div>
         <textarea class="note-input" id="note-textarea" placeholder="今天感觉怎么样？写在这里吧..."></textarea>
         <div class="modal-actions">
-            <button class="modal-btn modal-btn-cancel" onclick="closeModal('symptom-note-modal')">返回</button>
-            <button class="modal-btn modal-btn-confirm" onclick="saveNote()">保存</button>
+            <button class="modal-btn modal-btn-cancel" data-close="symptom-note-modal">返回</button>
+            <button class="modal-btn modal-btn-confirm" id="btn-save-note">保存</button>
         </div>
     </div>
 </div>
-
-<script>
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
-        return null;
-    }
-
-    let USER_ID = getCookie('userId');
-    let USER_NAME = getCookie('username');
-    let CYCLE_ID = null;
-
-    if (!USER_ID) USER_ID = 5; else USER_ID = parseInt(USER_ID, 10);
-
-    const BASE_URL = 'http://127.0.0.1:8088';
-    const API_BASE = `${BASE_URL}/record/index`;
-
-    let currentSymptoms = { flowLevel: 1, painLevel: 1, mood: "开心", notes: "无" };
-
-    const flowMap = { 0: "少量", 1: "正常", 2: "多量" };
-    const painMap = { 0: "轻微", 1: "正常", 2: "剧烈" };
-
-    const flowRevMap = { "少量": 0, "正常": 1, "多量": 2 };
-    const painRevMap = { "轻微": 0, "正常": 1, "剧烈": 2 };
-
-    document.addEventListener("DOMContentLoaded", () => {
-        if (USER_NAME) document.getElementById('user-name').innerText = USER_NAME;
-        // 为“发生了什么”按钮增加弹窗提示
-        document.getElementById('btn-what').addEventListener('click', () => {
-            showModalMsg("生活记录功能正在开发中哦~ 敬请期待！🌸", true);
-        });
-    });
-
-    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
-
-    function showModalMsg(message, isAlert = false) {
-        return new Promise((resolve) => {
-            const overlay = document.getElementById('custom-modal');
-            const msgEl = document.getElementById('modal-msg');
-            const btnCancel = document.getElementById('modal-cancel');
-            const btnConfirm = document.getElementById('modal-confirm');
-
-            msgEl.innerText = message;
-            btnCancel.style.display = isAlert ? 'none' : 'block';
-            btnConfirm.innerText = isAlert ? '我知道了' : '确认';
-            overlay.classList.add('show');
-
-            const cleanup = () => {
-                overlay.classList.remove('show');
-                btnConfirm.removeEventListener('click', onConfirm);
-                btnCancel.removeEventListener('click', onCancel);
-            };
-            const onConfirm = () => { cleanup(); resolve(true); };
-            const onCancel = () => { cleanup(); resolve(false); };
-
-            btnConfirm.addEventListener('click', onConfirm);
-            btnCancel.addEventListener('click', onCancel);
-        });
-    }
-
-    async function fetchInitialData(userId) {
-        try {
-            const response = await fetch(`${API_BASE}/query_user_info`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: userId })
-            });
-            return await response.json();
-        } catch (error) {
-            return {
-                "code": "0000", "data": {
-                    "userId": userId, "cycleId": 8, "userName": USER_NAME || "元气少女",
-                    "avatar": "https://api.dicebear.com/7.x/adventurer/svg?seed=" + (USER_NAME || "Felix"),
-                    "comeDays": "4天前", "goDays": "1天后", "status": 0,
-                    "aiSuggestion": "状态很好，很健康，保持好心情积极面对生活吧"
-                }
-            };
-        }
-    }
-
-    function renderUI(data) {
-        if (data.userName) document.getElementById('user-name').innerText = data.userName;
-        if (data.avatar) document.getElementById('user-avatar').style.backgroundImage = `url('${data.avatar}')`;
-        document.getElementById('ai-suggestion').innerText = data.aiSuggestion || "状态很好，很健康，保持好心情积极面对生活吧";
-        if (data.comeDays) document.getElementById('date-come').innerText = data.comeDays;
-        if (data.goDays) document.getElementById('date-go').innerText = data.goDays;
-        const actionArea = document.getElementById('action-area');
-        if (data.status === 0) actionArea.classList.remove('reverse');
-        else if (data.status === 1) actionArea.classList.add('reverse');
-    }
-
-    async function init() {
-        if (!USER_ID) return;
-        const res = await fetchInitialData(USER_ID);
-        if (res && res.code === "0000") {
-            CYCLE_ID = res.data.cycleId;
-            renderUI(res.data);
-        }
-    }
-
-    async function handleAction(type) {
-        let confirmMsg = type === 'come' ? "确定大姨妈来了吗？" : "确定大姨妈走了吗？";
-        let endpoint = type === 'come' ? `${API_BASE}/start_cycle_record` : `${API_BASE}/over_cycle_record`;
-        if (await showModalMsg(confirmMsg, false)) {
-            try {
-                const response = await fetch(endpoint, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: USER_ID })
-                });
-                const resData = await response.json();
-                if (resData.code === "0000") init();
-                else await showModalMsg(resData.info || "操作失败，请重试", true);
-            } catch (error) { await showModalMsg("网络请求失败！", true); }
-        }
-    }
-
-    document.getElementById('btn-status').addEventListener('click', async () => {
-        if (!CYCLE_ID) { await showModalMsg("暂无周期数据", true); return; }
-
-        let payload = { cycleId: parseInt(CYCLE_ID), userId: parseInt(USER_ID), flowLevel: 1, painLevel: 1, mood: "", notes: "" };
-        try {
-            const response = await fetch(`${API_BASE}/query_symptom`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
-            });
-            const resData = await response.json();
-            if (resData.code === "0000" && resData.data) updateLocalSymptoms(resData.data);
-        } catch (error) {
-            updateLocalSymptoms({ flowLevel: 1, painLevel: 1, mood: "正常", notes: "无" });
-        }
-        refreshSymptomUI();
-        document.getElementById('symptom-record-modal').classList.add('show');
-    });
-
-    function updateLocalSymptoms(data) {
-        let f = parseInt(data.flowLevel);
-        let p = parseInt(data.painLevel);
-
-        currentSymptoms.flowLevel = isNaN(f) ? 1 : f;
-        currentSymptoms.painLevel = isNaN(p) ? 1 : p;
-        currentSymptoms.mood = data.mood || "正常";
-        currentSymptoms.notes = data.notes || "无";
-    }
-
-    function refreshSymptomUI() {
-        document.getElementById('val-pain').innerText = painMap[currentSymptoms.painLevel] || "正常";
-        document.getElementById('val-flow').innerText = flowMap[currentSymptoms.flowLevel] || "正常";
-        document.getElementById('val-mood').innerText = currentSymptoms.mood;
-        let noteStr = currentSymptoms.notes || "无";
-        document.getElementById('val-note').innerText = noteStr;
-    }
-
-    function openSubModal(type) {
-        if (type === 'note') {
-            document.getElementById('note-textarea').value = currentSymptoms.notes === "无" ? "" : currentSymptoms.notes;
-            document.getElementById('symptom-note-modal').classList.add('show');
-            return;
-        }
-
-        const container = document.getElementById('options-container');
-        container.innerHTML = '';
-
-        let options = [];
-        let currentValue = '';
-        let currentType = type;
-
-        if (type === 'pain') {
-            options = ["轻微", "正常", "剧烈"];
-            currentValue = painMap[currentSymptoms.painLevel];
-        } else if (type === 'flow') {
-            options = ["少量", "正常", "多量"];
-            currentValue = flowMap[currentSymptoms.flowLevel];
-        } else if (type === 'mood') {
-            options = ["开心", "正常", "焦虑", "悲伤", "兴奋", "幸福"];
-            currentValue = currentSymptoms.mood;
-        }
-
-        options.forEach(opt => {
-            const btn = document.createElement('div');
-            btn.className = 'option-btn' + (opt === currentValue ? ' selected' : '');
-            btn.innerText = opt;
-            btn.onclick = () => selectOption(currentType, opt);
-            container.appendChild(btn);
-        });
-
-        document.getElementById('symptom-options-modal').classList.add('show');
-    }
-
-    function selectOption(type, value) {
-        if (type === 'pain') {
-            let mappedVal = painRevMap[value];
-            currentSymptoms.painLevel = mappedVal !== undefined ? mappedVal : 1;
-        }
-        else if (type === 'flow') {
-            let mappedVal = flowRevMap[value];
-            currentSymptoms.flowLevel = mappedVal !== undefined ? mappedVal : 1;
-        }
-        else if (type === 'mood') currentSymptoms.mood = value;
-
-        refreshSymptomUI();
-        closeModal('symptom-options-modal');
-    }
-
-    function saveNote() {
-        let val = document.getElementById('note-textarea').value.trim();
-        currentSymptoms.notes = val === "" ? "无" : val;
-        refreshSymptomUI();
-        closeModal('symptom-note-modal');
-    }
-
-    async function submitSymptomRecord() {
-        let payload = {
-            cycleId: parseInt(CYCLE_ID) || 0,
-            userId: parseInt(USER_ID) || 0,
-            flowLevel: parseInt(currentSymptoms.flowLevel),
-            painLevel: parseInt(currentSymptoms.painLevel),
-            mood: currentSymptoms.mood,
-            notes: currentSymptoms.notes === "无" ? "" : currentSymptoms.notes
-        };
-
-        try {
-            const response = await fetch(`${API_BASE}/change_symptom`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            const resData = await response.json();
-            if (resData.code === "0000") {
-                closeModal('symptom-record-modal');
-                setTimeout(() => showModalMsg("状态记录已保存 🌸", true), 300);
-            } else {
-                await showModalMsg(resData.info || "非法参数或记录失败", true);
-            }
-        } catch (error) {
-            console.log("网络请求异常", error);
-            closeModal('symptom-record-modal');
-        }
-    }
-
-    document.getElementById('btn-come').addEventListener('click', () => handleAction('come'));
-    document.getElementById('btn-go').addEventListener('click', () => handleAction('go'));
-
-    window.onload = init;
-
-    function initJourneyAnimation() {
-        const canvas = document.getElementById('journeyCanvas');
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        function resize() {
-            const rect = canvas.getBoundingClientRect();
-            canvas.width = rect.width * window.devicePixelRatio; canvas.height = rect.height * window.devicePixelRatio;
-            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-        }
-        resize(); window.addEventListener('resize', resize);
-        let time = 0; const speed = 0.5; let friendState = 0; let friendX = -50; let stateTimer = 0;
-        function draw() {
-            const w = canvas.getBoundingClientRect().width; const h = canvas.getBoundingClientRect().height; ctx.clearRect(0, 0, w, h);
-            time += 0.005; stateTimer += 1;
-            const cy = h * 0.35; const radius = w * 0.45;
-            const sunX = w/2 + Math.cos(time) * radius; const sunY = cy + Math.sin(time) * radius;
-            const moonX = w/2 + Math.cos(time + Math.PI) * radius; const moonY = cy + Math.sin(time + Math.PI) * radius;
-            if (sunY < h * 0.7) { ctx.beginPath(); ctx.arc(sunX, sunY, 14, 0, Math.PI * 2); ctx.fillStyle = '#ff9f43'; ctx.shadowBlur = 20; ctx.shadowColor = '#ff9f43'; ctx.fill(); ctx.shadowBlur = 0; }
-            if (moonY < h * 0.7) { ctx.beginPath(); ctx.arc(moonX, moonY, 11, 0, Math.PI * 2); ctx.fillStyle = '#feca57'; ctx.shadowBlur = 15; ctx.shadowColor = '#feca57'; ctx.fill(); ctx.shadowBlur = 0; }
-            const groundY = h * 0.75;
-            ctx.fillStyle = 'rgba(157, 125, 250, 0.15)'; ctx.beginPath();
-            for (let x = 0; x <= w; x += 10) { const y = groundY - 35 - Math.sin(x * 0.01 + time * 0.2) * 10 - Math.cos(x * 0.005) * 15; if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y); }
-            ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.fill();
-            ctx.fillStyle = 'rgba(107, 227, 233, 0.2)'; ctx.beginPath();
-            for (let x = 0; x <= w; x += 10) { const y = groundY - 5 + Math.sin(x * 0.03 + time * 0.5) * 4; if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y); }
-            ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.fill();
-            ctx.strokeStyle = 'rgba(131, 144, 193, 0.3)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, groundY); ctx.lineTo(w, groundY); ctx.stroke();
-            const playerX = w * 0.4; const bounce = Math.sin(stateTimer * 0.08) * 2;
-            if (friendState === 0) { if (stateTimer > 400) { friendState = 1; friendX = w + 30; } }
-            else if (friendState === 1) { friendX -= speed * 1.5; if (friendX <= playerX + 25) { friendState = 2; stateTimer = 0; } }
-            else if (friendState === 2) { friendX = playerX + 22; if (stateTimer > 500) { friendState = 3; } }
-            else if (friendState === 3) { friendX -= speed * 0.5; if (friendX < -30) { friendState = 0; stateTimer = 0; } }
-            drawCharacter(ctx, playerX, groundY + bounce, '#ff7eb3');
-            if (friendState > 0) {
-                const friendBounce = Math.sin(stateTimer * 0.09) * 2; drawCharacter(ctx, friendX, groundY + friendBounce, '#9d7dfa');
-                if (friendState === 2) { ctx.strokeStyle = '#ff7eb3'; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(playerX + 5, groundY + bounce - 12); ctx.lineTo(friendX - 5, groundY + friendBounce - 12); ctx.stroke(); }
-            }
-            requestAnimationFrame(draw);
-        }
-        function drawCharacter(context, x, y, color) {
-            context.fillStyle = color; context.beginPath(); context.moveTo(x, y - 2); context.lineTo(x - 8, y - 18); context.lineTo(x + 8, y - 18); context.closePath(); context.fill();
-            context.beginPath(); context.arc(x, y - 24, 6, 0, Math.PI * 2); context.fillStyle = '#555'; context.fill();
-            context.strokeStyle = '#555'; context.lineWidth = 2; context.beginPath(); context.moveTo(x - 3, y - 2); context.lineTo(x - 3 + Math.sin(stateTimer * 0.1) * 3, y + 3); context.moveTo(x + 3, y - 2); context.lineTo(x + 3 - Math.sin(stateTimer * 0.1) * 3, y + 3); context.stroke();
-        }
-        draw();
-    }
-    initJourneyAnimation();
-</script>
+<script src="js/ui-enhance.js"></script>
+<script src="js/index.js"></script>
 </body>
 </html>
