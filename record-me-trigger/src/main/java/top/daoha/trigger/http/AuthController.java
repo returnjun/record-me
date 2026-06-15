@@ -10,19 +10,20 @@ import top.daoha.api.IAuthService;
 import top.daoha.api.dto.AuthRequestDTO;
 import top.daoha.api.dto.AuthResposeDTO;
 import top.daoha.api.response.Response;
+import top.daoha.domain.identity.model.entity.UserEntity;
 import top.daoha.types.enums.ResponseCode;
 import top.daoha.types.exception.AppException;
 
 import javax.annotation.Resource;
 
 @Slf4j
-@RestController()
+@RestController
 @CrossOrigin("*")
 @RequestMapping("/record/auth/")
 public class AuthController implements IAuthService {
 
     @Resource
-    private top.daoha.domain.auth.service.IAuthService authService;
+    private top.daoha.domain.identity.service.IAuthService authService;
 
     @RequestMapping(value = "login", method = RequestMethod.POST)
     @Override
@@ -35,11 +36,10 @@ public class AuthController implements IAuthService {
                         .build();
             }
 
-            top.daoha.domain.auth.model.entity.UserEntity userEntity =
-                    top.daoha.domain.auth.model.entity.UserEntity.builder()
-                            .username(user.getUsername())
-                            .password(user.getPassword())
-                            .build();
+            UserEntity userEntity = UserEntity.builder()
+                    .username(user.getUsername())
+                    .password(user.getPassword())
+                    .build();
 
             Long userId = authService.checkUserLogin(userEntity);
 
@@ -73,33 +73,29 @@ public class AuthController implements IAuthService {
     @Override
     public Response<AuthResposeDTO> register(@RequestBody AuthRequestDTO user) {
         try {
-            // 1. 基础的非空判断
-            if (user.getUsername() == null || user.getPassword() == null || user.getUsername().trim().isEmpty() || user.getPassword().trim().isEmpty()) {
+            if (user.getUsername() == null || user.getPassword() == null
+                    || user.getUsername().trim().isEmpty() || user.getPassword().trim().isEmpty()) {
                 return Response.<AuthResposeDTO>builder()
                         .code(ResponseCode.ILLEGAL_PARAMETER.getCode())
                         .info("用户名或密码不能为空")
                         .build();
             }
 
-            // 2. 密码复杂度强校验 (后端防线)
-            // 正则含义: 至少包含一个字母，至少包含一个数字，至少包含一个符号，总长度至少8位
             String passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^A-Za-z\\d\\s]).{8,}$";
             if (!user.getPassword().matches(passwordRegex)) {
                 return Response.<AuthResposeDTO>builder()
-                        .code(ResponseCode.ILLEGAL_PARAMETER.getCode()) // 或者你可以定义一个专门的 ResponseCode.WEAK_PASSWORD
-                        .info("密码复杂度不足，请求被拦截")
+                        .code(ResponseCode.ILLEGAL_PARAMETER.getCode())
+                        .info("密码复杂度不足，请求被拒绝")
                         .build();
             }
 
-            // 3. 构建实体并调用 Service
-            top.daoha.domain.auth.model.entity.UserEntity userEntity =
-                    top.daoha.domain.auth.model.entity.UserEntity.builder()
-                            .username(user.getUsername())
-                            .password(user.getPassword()) // 注意：实际落库前在 Service 层最好再对密码进行 BCrypt 加密
-                            .phone(user.getPhone())
-                            .build();
+            UserEntity userEntity = UserEntity.builder()
+                    .username(user.getUsername())
+                    .password(user.getPassword())
+                    .phone(user.getPhone())
+                    .build();
 
-            top.daoha.domain.auth.model.entity.UserEntity registered = authService.userRegister(userEntity);
+            UserEntity registered = authService.userRegister(userEntity);
 
             log.info("用户注册成功 userId={}, username={}", registered.getUserId(), registered.getUsername());
 

@@ -2,8 +2,8 @@ package top.daoha.infrastructure.adapter.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-import top.daoha.domain.auth.adapter.repository.ILoginRepository;
-import top.daoha.domain.auth.model.entity.UserEntity;
+import top.daoha.domain.identity.adapter.repository.ILoginRepository;
+import top.daoha.domain.identity.model.entity.UserEntity;
 import top.daoha.infrastructure.dao.IUserInfoDao;
 import top.daoha.infrastructure.dao.IUserLoginLogDao;
 import top.daoha.infrastructure.dao.po.UserInfo;
@@ -38,29 +38,54 @@ public class AuthRepository implements ILoginRepository {
                 .build();
     }
 
+    @Override
+    public UserEntity queryByUserId(Long userId) {
+        UserInfo userInfo = userInfoDao.selectById(userId);
+        if (userInfo == null) {
+            return null;
+        }
+        return UserEntity.builder()
+                .userId(userInfo.getUserId())
+                .username(userInfo.getUsername())
+                .password(userInfo.getPassword())
+                .phone(userInfo.getPhone())
+                .avatar(userInfo.getAvatar())
+                .birthday(userInfo.getBirthday())
+                .height(userInfo.getHeight())
+                .weight(userInfo.getWeight())
+                .build();
+    }
+
+    @Override
+    public Boolean updataUserInfo(UserEntity user) {
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUserId(user.getUserId());
+        userInfo.setUsername(user.getUsername());
+        userInfo.setAvatar(user.getAvatar());
+        userInfo.setPhone(user.getPhone());
+        userInfo.setBirthday(user.getBirthday());
+        userInfo.setHeight(user.getHeight());
+        userInfo.setWeight(user.getWeight());
+        int count = userInfoDao.updateById(userInfo);
+        log.info("用户信息已更新 userId={}", user.getUserId());
+        return count > 0;
+    }
 
     @Override
     public UserEntity insertUser(UserEntity user) {
         UserInfo userInfo = new UserInfo();
         userInfo.setUsername(user.getUsername());
-        // 直接取实体中的密码，此时它已经被 Domain 层加密过了，Repository 不做任何处理
         userInfo.setPassword(user.getPassword());
         userInfo.setPhone(user.getPhone());
-        // 2. 执行插入，MyBatis 会通过 useGeneratedKeys 把生成的 ID 赋值给 userInfo.userId
+
         int count = userInfoDao.insert(userInfo);
-
         if (count > 0) {
-            // 3. 将生成的数据库 ID 回填给 Domain 层的实体，使其成为“完整体”
             user.setUserId(userInfo.getUserId());
-
             log.info("用户注册成功 userId={}, username={}", user.getUserId(), user.getUsername());
-
-            // 4. 返回完整实体
             return user;
         }
 
-        // 5. 插入失败时，直接抛出你在 types 层定义的业务/系统异常
-        log.error("数据库插入用户失败, username={}", user.getUsername());
+        log.error("数据库插入用户失败 username={}", user.getUsername());
         throw new AppException(ResponseCode.UN_ERROR.getCode(), "数据库写入失败");
     }
 
@@ -89,4 +114,5 @@ public class AuthRepository implements ILoginRepository {
         userInfoDao.deleteById(userId);
         log.info("用户已逻辑删除 userId={}", userId);
     }
+
 }

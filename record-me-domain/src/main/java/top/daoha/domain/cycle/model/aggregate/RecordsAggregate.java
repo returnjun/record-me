@@ -1,11 +1,11 @@
-package top.daoha.domain.dataShow.model.aggregate;
+package top.daoha.domain.cycle.model.aggregate;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import top.daoha.domain.dataShow.model.entity.CycleRecordEntity;
-import top.daoha.domain.dataShow.model.entity.UserEntity;
+import top.daoha.domain.cycle.model.entity.CycleRecordEntity;
+import top.daoha.domain.cycle.model.entity.UserEntity;
 
 import java.util.List;
 
@@ -13,7 +13,10 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DataShowAggregate {
+public class RecordsAggregate {
+
     private List<CycleRecordEntity> cycleList;
-    private UserEntity user;
+
+    private Integer count = 0;
+
 }

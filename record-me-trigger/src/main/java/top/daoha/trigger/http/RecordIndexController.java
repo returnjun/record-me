@@ -7,15 +7,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import top.daoha.api.IRecordIndexService;
-import top.daoha.api.dto.RecordIndexRequestDTO;
+import top.daoha.api.dto.UserIdRequestDTO;
 import top.daoha.api.dto.RecordIndexResponseDTO;
 import top.daoha.api.dto.SymptomRequestDTO;
 import top.daoha.api.dto.SymptomResponseDTO;
 import top.daoha.api.response.Response;
-import top.daoha.domain.record.model.aggregate.IndexInfoAggregate;
-import top.daoha.domain.record.model.entity.SymptomEntity;
-import top.daoha.domain.record.service.IRecordService;
-import top.daoha.domain.record.service.change.IUpdateRecordService;
+import top.daoha.domain.cycle.model.aggregate.IndexInfoAggregate;
+import top.daoha.domain.cycle.service.ICycleService;
+import top.daoha.domain.cycle.service.lifecycle.ICycleLifecycleService;
+import top.daoha.domain.health.model.entity.DailySymptomEntity;
+import top.daoha.domain.health.service.IHealthTrackService;
 import top.daoha.types.enums.RecordStatusEnumVO;
 import top.daoha.types.enums.ResponseCode;
 
@@ -25,43 +26,42 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
-
 @Slf4j
-@RestController()
+@RestController
 @CrossOrigin("*")
 @RequestMapping("/record/index/")
 public class RecordIndexController implements IRecordIndexService {
 
     @Resource
-    private IRecordService recordService;
+    private ICycleService cycleService;
 
     @Resource
-    private IUpdateRecordService updateRecordService;
+    private ICycleLifecycleService cycleLifecycleService;
+
+    @Resource
+    private IHealthTrackService healthTrackService;
 
     @RequestMapping(value = "query_user_info", method = RequestMethod.POST)
     @Override
-    public Response<RecordIndexResponseDTO> getIndexInfoAggregate(@RequestBody RecordIndexRequestDTO recordIndexRequestDTO) {
+    public Response<RecordIndexResponseDTO> getIndexInfoAggregate(@RequestBody UserIdRequestDTO userIdRequestDTO) {
         try {
-            if (recordIndexRequestDTO.getUserId() == null) {
+            if (userIdRequestDTO.getUserId() == null) {
                 return Response.<RecordIndexResponseDTO>builder()
                         .code(ResponseCode.ILLEGAL_PARAMETER.getCode())
                         .info(ResponseCode.ILLEGAL_PARAMETER.getInfo())
                         .build();
             }
 
-            IndexInfoAggregate aggregate = recordService.getIndexInfoAggregate(recordIndexRequestDTO.getUserId());
+            IndexInfoAggregate aggregate = cycleService.getIndexInfoAggregate(userIdRequestDTO.getUserId());
             aggregate.addPredictedTime();
 
-            // 获取当前日期的 LocalDate (抹平了时分秒的影响，专门用于计算天数)
+            // 使用 LocalDate 抹平时分秒影响，只计算自然日间隔
             LocalDate today = LocalDate.now();
             String comeDays = "";
             String goDays = "";
 
-            // 根据不同状态，计算几天前/几天后
             if (RecordStatusEnumVO.COMING == aggregate.getStatus()) {
-                // 【情况1：在生理期内】
-                // 预测开始时间(PredictedStartTime) = 实际哪天来的 (过去)
-                // 预测结束时间(PredictedEndTime) = 估计哪天走 (未来)
+                // 生理期内：开始时间是实际来潮日期，结束时间是预测结束日期
                 if (aggregate.getPredictedStartTime() != null) {
                     LocalDate startDate = aggregate.getPredictedStartTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                     long daysAgo = ChronoUnit.DAYS.between(startDate, today);
@@ -74,9 +74,7 @@ public class RecordIndexController implements IRecordIndexService {
                     goDays = daysLater == 0 ? "今天" : Math.abs(daysLater) + "天后";
                 }
             } else {
-                // 【情况2：不在生理期内】
-                // 预测开始时间(PredictedStartTime) = 估计下次哪天来 (未来)
-                // 预测结束时间(PredictedEndTime) = 上次哪天走的 (过去)
+                // 生理期外：开始时间是预测下次来潮日期，结束时间是上次结束日期
                 if (aggregate.getPredictedStartTime() != null) {
                     LocalDate nextStartDate = aggregate.getPredictedStartTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                     long daysLater = ChronoUnit.DAYS.between(today, nextStartDate);
@@ -90,23 +88,22 @@ public class RecordIndexController implements IRecordIndexService {
                 }
             }
 
-            // 构建返回的 DTO
             RecordIndexResponseDTO dto = RecordIndexResponseDTO.builder()
                     .userId(aggregate.getUser().getUserId())
                     .cycleId(aggregate.getNowStatus().getCycleId())
                     .avatar(aggregate.getUser().getAvatar())
                     .avgCycleDays(aggregate.getUser().getAvgCycleDays())
                     .avgPeriodDays(aggregate.getUser().getAvgPeriodDays())
-                    .PredictedStartTime(aggregate.getPredictedStartTime()) // 保持你DTO中首字母大写的命名
+                    .PredictedStartTime(aggregate.getPredictedStartTime())
                     .PredictedEndTime(aggregate.getPredictedEndTime())
                     .comeDays(comeDays)
                     .goDays(goDays)
                     .status(aggregate.getStatus() != null ? aggregate.getStatus().getCode() : 1)
-                    .events(new ArrayList<>()) // 以后再扩展
-                    .aiSuggestion(null)        // 以后再扩展
+                    .events(new ArrayList<>())
+                    .aiSuggestion(null)
                     .build();
 
-            log.info("查询首页信息成功 userId={}", recordIndexRequestDTO.getUserId());
+            log.info("查询首页信息成功 userId={}", userIdRequestDTO.getUserId());
             return Response.<RecordIndexResponseDTO>builder()
                     .code(ResponseCode.SUCCESS.getCode())
                     .info(ResponseCode.SUCCESS.getInfo())
@@ -114,7 +111,7 @@ public class RecordIndexController implements IRecordIndexService {
                     .build();
 
         } catch (Exception e) {
-            log.error("查询首页信息失败 userId={}", recordIndexRequestDTO.getUserId(), e.getMessage());
+            log.error("查询首页信息失败 userId={}", userIdRequestDTO.getUserId(), e);
             return Response.<RecordIndexResponseDTO>builder()
                     .code(ResponseCode.UN_ERROR.getCode())
                     .info(ResponseCode.UN_ERROR.getInfo())
@@ -124,26 +121,26 @@ public class RecordIndexController implements IRecordIndexService {
 
     @RequestMapping(value = "over_cycle_record", method = RequestMethod.POST)
     @Override
-    public Response<Boolean> overCycleRecord(@RequestBody RecordIndexRequestDTO recordIndexRequestDTO) {
+    public Response<Boolean> overCycleRecord(@RequestBody UserIdRequestDTO userIdRequestDTO) {
         try {
-            if (recordIndexRequestDTO.getUserId() == null) {
+            if (userIdRequestDTO.getUserId() == null) {
                 return Response.<Boolean>builder()
                         .code(ResponseCode.ILLEGAL_PARAMETER.getCode())
                         .info(ResponseCode.ILLEGAL_PARAMETER.getInfo())
                         .build();
             }
 
-            Boolean result = updateRecordService.overCycleRecord(recordIndexRequestDTO.getUserId());
+            Boolean result = cycleLifecycleService.overCycleRecord(userIdRequestDTO.getUserId());
 
             if (Boolean.TRUE.equals(result)) {
-                log.info("结束周期成功 userId={}", recordIndexRequestDTO.getUserId());
+                log.info("结束周期成功 userId={}", userIdRequestDTO.getUserId());
                 return Response.<Boolean>builder()
                         .code(ResponseCode.SUCCESS.getCode())
                         .info(ResponseCode.SUCCESS.getInfo())
                         .data(true)
                         .build();
             } else {
-                log.warn("结束周期失败，更新记录为0 userId={}", recordIndexRequestDTO.getUserId());
+                log.warn("结束周期失败，更新记录为 0 userId={}", userIdRequestDTO.getUserId());
                 return Response.<Boolean>builder()
                         .code(ResponseCode.UPDATE_ZERO.getCode())
                         .info(ResponseCode.UPDATE_ZERO.getInfo())
@@ -151,7 +148,7 @@ public class RecordIndexController implements IRecordIndexService {
                         .build();
             }
         } catch (Exception e) {
-            log.error("结束周期异常 userId={}", recordIndexRequestDTO.getUserId(), e);
+            log.error("结束周期异常 userId={}", userIdRequestDTO.getUserId(), e);
             return Response.<Boolean>builder()
                     .code(ResponseCode.UN_ERROR.getCode())
                     .info(ResponseCode.UN_ERROR.getInfo())
@@ -161,26 +158,26 @@ public class RecordIndexController implements IRecordIndexService {
 
     @RequestMapping(value = "start_cycle_record", method = RequestMethod.POST)
     @Override
-    public Response<Boolean> startCycleRecord(@RequestBody RecordIndexRequestDTO recordIndexRequestDTO) {
+    public Response<Boolean> startCycleRecord(@RequestBody UserIdRequestDTO userIdRequestDTO) {
         try {
-            if (recordIndexRequestDTO.getUserId() == null) {
+            if (userIdRequestDTO.getUserId() == null) {
                 return Response.<Boolean>builder()
                         .code(ResponseCode.ILLEGAL_PARAMETER.getCode())
                         .info(ResponseCode.ILLEGAL_PARAMETER.getInfo())
                         .build();
             }
 
-            Boolean result = updateRecordService.startCycleRecord(recordIndexRequestDTO.getUserId());
+            Boolean result = cycleLifecycleService.startCycleRecord(userIdRequestDTO.getUserId());
 
             if (Boolean.TRUE.equals(result)) {
-                log.info("开始新周期成功 userId={}", recordIndexRequestDTO.getUserId());
+                log.info("开始新周期成功 userId={}", userIdRequestDTO.getUserId());
                 return Response.<Boolean>builder()
                         .code(ResponseCode.SUCCESS.getCode())
                         .info(ResponseCode.SUCCESS.getInfo())
                         .data(true)
                         .build();
             } else {
-                log.warn("开始新周期失败，更新记录为0 userId={}", recordIndexRequestDTO.getUserId());
+                log.warn("开始新周期失败，更新记录为 0 userId={}", userIdRequestDTO.getUserId());
                 return Response.<Boolean>builder()
                         .code(ResponseCode.UPDATE_ZERO.getCode())
                         .info(ResponseCode.UPDATE_ZERO.getInfo())
@@ -188,7 +185,7 @@ public class RecordIndexController implements IRecordIndexService {
                         .build();
             }
         } catch (Exception e) {
-            log.error("开始新周期异常 userId={}", recordIndexRequestDTO.getUserId(), e);
+            log.error("开始新周期异常 userId={}", userIdRequestDTO.getUserId(), e);
             return Response.<Boolean>builder()
                     .code(ResponseCode.UN_ERROR.getCode())
                     .info(ResponseCode.UN_ERROR.getInfo())
@@ -207,7 +204,7 @@ public class RecordIndexController implements IRecordIndexService {
                         .build();
             }
 
-            SymptomEntity entity = recordService.getSymptomById(dto.getUserId(), dto.getCycleId());
+            DailySymptomEntity entity = healthTrackService.getTodaySymptom(dto.getUserId(), dto.getCycleId());
 
             SymptomResponseDTO resp = SymptomResponseDTO.builder()
                     .recordId(entity.getRecordId())
@@ -222,7 +219,7 @@ public class RecordIndexController implements IRecordIndexService {
                     .updateTime(entity.getUpdateTime())
                     .build();
 
-            log.info("查询日常状态成功 userId={}, cycleId={}, recordId={}",
+            log.info("查询今日症状成功 userId={}, cycleId={}, recordId={}",
                     dto.getUserId(), dto.getCycleId(), entity.getRecordId());
             return Response.<SymptomResponseDTO>builder()
                     .code(ResponseCode.SUCCESS.getCode())
@@ -230,7 +227,7 @@ public class RecordIndexController implements IRecordIndexService {
                     .data(resp)
                     .build();
         } catch (Exception e) {
-            log.error("查询日常状态异常 userId={}, cycleId={}", dto.getUserId(), dto.getCycleId(), e);
+            log.error("查询今日症状异常 userId={}, cycleId={}", dto.getUserId(), dto.getCycleId(), e);
             return Response.<SymptomResponseDTO>builder()
                     .code(ResponseCode.UN_ERROR.getCode())
                     .info(ResponseCode.UN_ERROR.getInfo())
@@ -249,7 +246,7 @@ public class RecordIndexController implements IRecordIndexService {
                         .build();
             }
 
-            SymptomEntity entity = new SymptomEntity();
+            DailySymptomEntity entity = new DailySymptomEntity();
             entity.setUserId(dto.getUserId());
             entity.setCycleId(dto.getCycleId());
             entity.setRecordId(dto.getRecordId());
@@ -258,17 +255,17 @@ public class RecordIndexController implements IRecordIndexService {
             entity.setMood(dto.getMood());
             entity.setNotes(dto.getNotes());
 
-            Boolean result = updateRecordService.changeSymptom(entity);
+            Boolean result = healthTrackService.changeSymptom(entity);
 
             if (Boolean.TRUE.equals(result)) {
-                log.info("更新日常状态成功 recordId={}", dto.getRecordId());
+                log.info("更新今日症状成功 recordId={}", dto.getRecordId());
                 return Response.<Boolean>builder()
                         .code(ResponseCode.SUCCESS.getCode())
                         .info(ResponseCode.SUCCESS.getInfo())
                         .data(true)
                         .build();
             } else {
-                log.warn("更新日常状态失败 recordId={}", dto.getRecordId());
+                log.warn("更新今日症状失败 recordId={}", dto.getRecordId());
                 return Response.<Boolean>builder()
                         .code(ResponseCode.UPDATE_ZERO.getCode())
                         .info(ResponseCode.UPDATE_ZERO.getInfo())
@@ -276,12 +273,11 @@ public class RecordIndexController implements IRecordIndexService {
                         .build();
             }
         } catch (Exception e) {
-            log.error("更新日常状态异常 recordId={}", dto.getRecordId(), e);
+            log.error("更新今日症状异常 recordId={}", dto.getRecordId(), e);
             return Response.<Boolean>builder()
                     .code(ResponseCode.UN_ERROR.getCode())
                     .info(ResponseCode.UN_ERROR.getInfo())
                     .build();
         }
     }
-
 }

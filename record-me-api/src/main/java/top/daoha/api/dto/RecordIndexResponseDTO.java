@@ -14,37 +14,51 @@ import java.util.List;
 @NoArgsConstructor
 public class RecordIndexResponseDTO {
 
-    //用户id
+    // 用户 ID
     private Long userId;
-    //记录id
+
+    // 周期记录 ID
     private Long cycleId;
-    //用户名
+
+    // 用户名
     private String userName;
-    //头像
+
+    // 头像
     private String avatar;
-    //平均间隔时间
+
+    // 平均周期间隔天数
     private Integer avgCycleDays;
-    //平均持续时间
+
+    // 平均经期持续天数
     private Integer avgPeriodDays;
-    //预测开始时间，生理期内就是开始得时间
+
+    // 预测开始时间；生理期内时表示本次开始时间
     private Date PredictedStartTime;
-    //几天前或几天后来
+
+    // 距离来潮还有几天，或已经来潮几天
     private String comeDays;
-    //预测结束时间，生理期外就是上次结束时间
+
+    // 预测结束时间；生理期外时表示上次结束时间
     private Date PredictedEndTime;
-    //几天后或几天前走
+
+    // 距离结束还有几天，或已经结束几天
     private String goDays;
-    //记录当前状态 0：在生理期内，1：不在生理期内
+
+    // 当前状态：0 生理期内，1 生理期外
     private int status;
-    //发生了什么记录标签
-    List<event> events;
-    //后期的ai健康分析
+
+    // 事件标签
+    private List<event> events;
+
+    // 后续预留的 AI 健康建议
     private String aiSuggestion;
 
     public class event {
-        //事件名称
+
+        // 事件名称
         String eventName;
-        //事件程度
+
+        // 事件程度
         String eventProdure;
     }
 }

@@ -10,9 +10,10 @@ import top.daoha.api.IDataShowService;
 import top.daoha.api.dto.DataShowRequestDTO;
 import top.daoha.api.dto.DataShowResponseDTO;
 import top.daoha.api.response.Response;
-import top.daoha.domain.dataShow.model.aggregate.DataShowAggregate;
-import top.daoha.domain.dataShow.model.entity.CycleRecordEntity;
-import top.daoha.domain.dataShow.model.entity.UserEntity;
+import top.daoha.domain.cycle.model.aggregate.CycleHistoryAggregate;
+import top.daoha.domain.cycle.model.entity.CycleRecordEntity;
+import top.daoha.domain.cycle.model.entity.UserEntity;
+import top.daoha.domain.cycle.service.ICycleHistoryService;
 import top.daoha.types.enums.ResponseCode;
 
 import javax.annotation.Resource;
@@ -20,13 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@RestController()
+@RestController
 @CrossOrigin("*")
 @RequestMapping("/record/data/")
 public class DataShowController implements IDataShowService {
 
     @Resource
-    private top.daoha.domain.dataShow.service.IDataShowService dataShowService;
+    private ICycleHistoryService cycleHistoryService;
 
     @RequestMapping(value = "query_cycle_list", method = RequestMethod.POST)
     @Override
@@ -38,14 +39,15 @@ public class DataShowController implements IDataShowService {
                         .info(ResponseCode.ILLEGAL_PARAMETER.getInfo())
                         .build();
             }
+
             Integer count = dataShowRequestDTO.getCount();
             if (count == null || count <= 0) {
                 count = 5;
             }
 
-            DataShowAggregate aggregate = dataShowService.getCycleRecordList(dataShowRequestDTO.getUserId(), count);
-
+            CycleHistoryAggregate aggregate = cycleHistoryService.getCycleRecordList(dataShowRequestDTO.getUserId(), count);
             UserEntity user = aggregate.getUser();
+
             List<DataShowResponseDTO.CycleRecord> cycleRecordList = new ArrayList<>();
             if (aggregate.getCycleList() != null) {
                 for (CycleRecordEntity entity : aggregate.getCycleList()) {
@@ -81,4 +83,5 @@ public class DataShowController implements IDataShowService {
                     .build();
         }
     }
+
 }

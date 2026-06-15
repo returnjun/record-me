@@ -12,25 +12,10 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DataShowResponseDTO {
-
-    // 用户 ID
-    private Long userId;
-
-    // 用户名
-    private String userName;
-
-    // 头像
-    private String avatar;
-
-    // 平均周期间隔天数
-    private Integer avgCycleDays;
+public class RecordsResponseDTO {
 
     // 平均经期持续天数
-    private Integer avgPeriodDays;
-
-    // 当前状态：0 生理期内，1 生理期外
-    private int status;
+    private Integer recordsCount;
 
     // 周期记录列表
     private List<CycleRecord> cycleRecords;
