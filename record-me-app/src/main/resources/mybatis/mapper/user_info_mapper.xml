@@ -39,6 +39,14 @@
         WHERE username = #{username} AND is_deleted = 0
     </select>
 
+    <select id="selectByPhone" parameterType="java.lang.String" resultMap="UserInfoMap">
+        SELECT user_id, username, password, avatar, phone, birthday, height, weight,
+               avg_cycle_days, avg_period_days,
+               is_deleted, create_time, update_time
+        FROM user_info
+        WHERE phone = #{phone} AND is_deleted = 0
+    </select>
+
     <select id="selectList" parameterType="top.daoha.infrastructure.dao.po.UserInfo" resultMap="UserInfoMap">
         SELECT user_id, username, password, avatar, phone, birthday, height, weight,
                avg_cycle_days, avg_period_days,

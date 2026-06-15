@@ -6,8 +6,15 @@ function getCookie(name) {
     return null;
 }
 
-let USER_ID = getCookie('userId') ? parseInt(getCookie('userId'), 10) : 5;
+let USER_ID = parseInt(getCookie('userId') || '', 10);
 let USER_NAME = getCookie('username') || "元气少女";
+const BASE_URL = window.__RECORD_ME_API_BASE__ || '';
+const API_DATA = `${BASE_URL}/record/data`;
+const IS_AUTHENTICATED = !Number.isNaN(USER_ID);
+
+if (!IS_AUTHENTICATED) {
+    window.location.replace('login.html');
+}
 
 // 使用浏览器当天作为日历和未结束周期的高亮基准
 const todayDate = new Date();
@@ -32,6 +39,8 @@ function bindPressable(element, handler) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    if (!IS_AUTHENTICATED) return;
+
     document.getElementById('user-name').innerText = USER_NAME;
     document.getElementById('countSelector').addEventListener('change', loadData);
     document.getElementById('btn-prev-month').addEventListener('click', () => changeMonth(-1));
@@ -54,11 +63,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // 核心异步数据请求加载
 async function loadData() {
+    if (!IS_AUTHENTICATED) return;
+
     const countVal = document.getElementById('countSelector').value;
     const payload = { userId: USER_ID, count: parseInt(countVal, 10) };
 
     try {
-        const response = await fetch('http://127.0.0.1:8088/record/data/query_cycle_list', {
+        const response = await fetch(`${API_DATA}/query_cycle_list`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)

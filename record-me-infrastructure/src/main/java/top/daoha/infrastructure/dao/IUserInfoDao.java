@@ -14,6 +14,8 @@ public interface IUserInfoDao {
 
     UserInfo selectByUsername(String username);
 
+    UserInfo selectByPhone(String phone);
+
     List<UserInfo> selectList(UserInfo userInfo);
 
     int updateById(UserInfo userInfo);

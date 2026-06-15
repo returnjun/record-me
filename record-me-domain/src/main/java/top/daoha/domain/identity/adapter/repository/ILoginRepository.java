@@ -8,6 +8,8 @@ public interface ILoginRepository {
 
     // 根据用户名查询用户信息
     UserEntity queryByUsername(String username);
+    // 根据手机号查询用户信息
+    UserEntity queryByPhone(String phone);
     // 根据用户ID查询用户信息
     UserEntity queryByUserId(Long userId);
     //个人信息界面来进行修改

@@ -4,7 +4,7 @@ import top.daoha.domain.identity.model.entity.UserEntity;
 
 public interface IAuthService {
     //1 检查用户登录的情况
-    Long checkUserLogin(UserEntity user);
+    UserEntity checkUserLogin(UserEntity user);
 
     UserEntity userRegister(UserEntity user);
 

@@ -1,6 +1,7 @@
+#!/usr/bin/env sh
+set -e
 
-# 普通镜像构建，随系统版本构建 amd/arm
-docker build -t system/record-me-app:1.0-SNAPSHOT -f ./Dockerfile .
+IMAGE_NAME="record/record-me-app:1.0-SNAPSHOT"
 
-# 兼容 amd、arm 构建镜像
-# docker buildx build --load --platform liunx/amd64,linux/arm64 -t xiaofuge/xfg-frame-archetype-app:1.0 -f ./Dockerfile . --push
+docker build -t "${IMAGE_NAME}" -f ./Dockerfile .
+echo "Built ${IMAGE_NAME}"

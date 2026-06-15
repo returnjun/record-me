@@ -1,1 +1,2 @@
-docker stop record-me
+#!/usr/bin/env sh
+docker stop record-me-app

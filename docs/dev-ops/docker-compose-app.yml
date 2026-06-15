@@ -1,21 +1,53 @@
-# /usr/local/bin/docker-compose -f /docs/dev-ops/environment/environment-docker-compose-2.4.yml up -d
-version: '3.8'
-# docker-compose -f docker-compose-app.yml up -d
-# 你需要修改system为你自身系统的仓库名
+# Start app stack:
+# docker compose -f docker-compose-app.yml up -d
+#
+# The environment stack must be started first so the external
+# record-me-network and mysql service are available:
+# docker compose -f docker-compose-environment.yml up -d
+
 services:
-  record-me:
-    image: system/record-me:1.0-SNAPSHOT
-    container_name: record-me
-    restart: on-failure
-    ports:
-      - "8091:8091"
+  record-me-app:
+    image: record/record-me-app:1.0-SNAPSHOT
+    container_name: record-me-app
+    restart: unless-stopped
     environment:
-      - TZ=PRC
-      - SERVER_PORT=8091
+      TZ: Asia/Shanghai
+      SPRING_PROFILES_ACTIVE: prod
+      SERVER_PORT: 8088
+      JAVA_OPTS: "-Xms256m -Xmx512m"
+    ports:
+      - "8088:8088"
     volumes:
       - ./log:/data/log
+    networks:
+      - record-me-network
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
+
+  record-me-nginx:
+    image: nginx:1.25-alpine
+    container_name: record-me-nginx
+    restart: unless-stopped
+    depends_on:
+      - record-me-app
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/usr/share/nginx/html:ro
+      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf/conf.d:/etc/nginx/conf.d:ro
+    networks:
+      - record-me-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  record-me-network:
+    external: true
+    name: record-me-network

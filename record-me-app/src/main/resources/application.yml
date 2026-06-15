@@ -2,4 +2,4 @@ spring:
   config:
     name: record-me-app
   profiles:
-    active: dev
+    active: prod

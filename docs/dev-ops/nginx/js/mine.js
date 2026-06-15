@@ -78,12 +78,21 @@ function bindPageActions() {
 }
 
 // --- 全局变量 ---
-let USER_ID = getCookie('userId') ? parseInt(getCookie('userId'), 10) : 1;
+let USER_ID = parseInt(getCookie('userId') || '', 10);
+const BASE_URL = window.__RECORD_ME_API_BASE__ || '';
+const API_MINE = `${BASE_URL}/record/mine`;
 let currentUserData = { username: "加载中...", avatarSeed: "user" };
+const IS_AUTHENTICATED = !Number.isNaN(USER_ID);
+
+if (!IS_AUTHENTICATED) {
+    window.location.replace('login.html');
+}
 
 const fmtDate = (dateStr) => dateStr ? dateStr.split('T')[0] : "";
 
 document.addEventListener("DOMContentLoaded", () => {
+    if (!IS_AUTHENTICATED) return;
+
     bindPageActions();
     fetchUserInfo();
 });
@@ -91,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // ================= 模块一：用户信息管理 =================
 async function fetchUserInfo() {
     try {
-        const res = await fetch('http://127.0.0.1:8088/record/mine/getUsrInfo', {
+        const res = await fetch(`${API_MINE}/getUsrInfo`, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId: USER_ID })
         });
@@ -157,7 +166,7 @@ async function submitUserInfo() {
     }
 
     try {
-        const res = await fetch('http://127.0.0.1:8088/record/mine/changeUserInfo', {
+        const res = await fetch(`${API_MINE}/changeUserInfo`, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
@@ -206,7 +215,7 @@ async function loadCycleRecords() {
     loadText.innerText = "努力加载中...";
 
     try {
-        const res = await fetch('http://127.0.0.1:8088/record/mine/getUserRecord', {
+        const res = await fetch(`${API_MINE}/getUserRecord`, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId: USER_ID, page: cycleCurrentPage, pageSize: cyclePageSize })
         });
@@ -289,7 +298,7 @@ async function confirmCycleEdit() {
     confirmBtn.disabled = true;
 
     try {
-        const res = await fetch('http://127.0.0.1:8088/record/mine/changeUserRecord', {
+        const res = await fetch(`${API_MINE}/changeUserRecord`, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ cycleId: parseInt(cycleId), startDate: start, endDate: end })
         });

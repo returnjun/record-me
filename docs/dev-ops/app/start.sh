@@ -1,20 +1,23 @@
-CONTAINER_NAME=record-me
-IMAGE_NAME=system/record-me:1.0-SNAPSHOT
-PORT=8091
+#!/usr/bin/env sh
+set -e
 
-echo "容器部署开始 ${CONTAINER_NAME}"
+CONTAINER_NAME=record-me-app
+IMAGE_NAME=record/record-me-app:1.0-SNAPSHOT
+PORT=8088
 
-# 停止容器
-docker stop ${CONTAINER_NAME}
+echo "Starting ${CONTAINER_NAME}"
 
-# 删除容器
-docker rm ${CONTAINER_NAME}
+docker stop "${CONTAINER_NAME}" 2>/dev/null || true
+docker rm "${CONTAINER_NAME}" 2>/dev/null || true
 
-# 启动容器
-docker run --name ${CONTAINER_NAME} \
--p ${PORT}:${PORT} \
--d ${IMAGE_NAME}
+docker run --name "${CONTAINER_NAME}" \
+  --network record-me-network \
+  -e TZ=Asia/Shanghai \
+  -e SPRING_PROFILES_ACTIVE=prod \
+  -e SERVER_PORT="${PORT}" \
+  -p "${PORT}:${PORT}" \
+  -v "$(pwd)/../log:/data/log" \
+  -d "${IMAGE_NAME}"
 
-echo "容器部署成功 ${CONTAINER_NAME}"
-
-docker logs -f ${CONTAINER_NAME}
+echo "Started ${CONTAINER_NAME}"
+docker logs -f "${CONTAINER_NAME}"

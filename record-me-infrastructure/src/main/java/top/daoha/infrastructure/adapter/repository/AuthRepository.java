@@ -27,6 +27,16 @@ public class AuthRepository implements ILoginRepository {
     @Override
     public UserEntity queryByUsername(String username) {
         UserInfo userInfo = userInfoDao.selectByUsername(username);
+        return convertToEntity(userInfo);
+    }
+
+    @Override
+    public UserEntity queryByPhone(String phone) {
+        UserInfo userInfo = userInfoDao.selectByPhone(phone);
+        return convertToEntity(userInfo);
+    }
+
+    private UserEntity convertToEntity(UserInfo userInfo) {
         if (userInfo == null) {
             return null;
         }
@@ -35,6 +45,10 @@ public class AuthRepository implements ILoginRepository {
                 .username(userInfo.getUsername())
                 .password(userInfo.getPassword())
                 .phone(userInfo.getPhone())
+                .avatar(userInfo.getAvatar())
+                .birthday(userInfo.getBirthday())
+                .height(userInfo.getHeight())
+                .weight(userInfo.getWeight())
                 .build();
     }
 

@@ -5,13 +5,16 @@ function getCookie(name) {
     return null;
 }
 
-let USER_ID = getCookie('userId');
+let USER_ID = parseInt(getCookie('userId') || '', 10);
 let USER_NAME = getCookie('username');
 let CYCLE_ID = null;
+const IS_AUTHENTICATED = !Number.isNaN(USER_ID);
 
-if (!USER_ID) USER_ID = 5; else USER_ID = parseInt(USER_ID, 10);
+if (!IS_AUTHENTICATED) {
+    window.location.replace('login.html');
+}
 
-const BASE_URL = 'http://127.0.0.1:8088';
+const BASE_URL = window.__RECORD_ME_API_BASE__ || '';
 const API_BASE = `${BASE_URL}/record/index`;
 
 let currentSymptoms = { flowLevel: 1, painLevel: 1, mood: "开心", notes: "无" };
@@ -33,6 +36,8 @@ function bindPressable(element, handler) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    if (!IS_AUTHENTICATED) return;
+
     if (USER_NAME) document.getElementById('user-name').innerText = USER_NAME;
 
     document.querySelectorAll('[data-href]').forEach((item) => {
@@ -114,7 +119,7 @@ function renderUI(data) {
 }
 
 async function init() {
-    if (!USER_ID) return;
+    if (!IS_AUTHENTICATED) return;
     const res = await fetchInitialData(USER_ID);
     if (res && res.code === "0000") {
         CYCLE_ID = res.data.cycleId;

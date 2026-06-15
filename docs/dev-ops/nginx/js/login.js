@@ -1,5 +1,16 @@
-const BASE_URL = 'http://127.0.0.1:8088';
+const BASE_URL = window.__RECORD_ME_API_BASE__ || '';
 const API_AUTH = `${BASE_URL}/record/auth`;
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
+    return null;
+}
+
+if (getCookie('userId')) {
+    window.location.replace('index.html');
+}
 
 let isLoginMode = true;
 let isPasswordValid = true; // 默认登录模式不校验，设为true
@@ -90,6 +101,8 @@ btnToggle.addEventListener('click', () => {
         // 登录模式 UI
         groupPhone.classList.add('hidden');
         pwdHintContainer.classList.remove('show'); // 隐藏密码清单
+        document.getElementById('label-account').innerText = '账号';
+        inpUsername.placeholder = '用户名 / 手机号';
         btnSubmit.innerText = 'gogogo';
         btnToggle.innerText = '没有账号，点击注册';
         btnSubmit.style.background = 'linear-gradient(135deg, #ff7eb3 0%, #9d7dfa 100%)';
@@ -99,6 +112,8 @@ btnToggle.addEventListener('click', () => {
         // 注册模式 UI
         groupPhone.classList.remove('hidden');
         pwdHintContainer.classList.add('show'); // 显示密码清单
+        document.getElementById('label-account').innerText = '用户名';
+        inpUsername.placeholder = '请输入用户名';
         validatePassword(inpPassword.value); // 立刻校验一次当前输入框内容
         btnSubmit.innerText = '注 册';
         btnToggle.innerText = '已有账号，点击登录';
@@ -113,7 +128,7 @@ btnSubmit.addEventListener('click', async () => {
     const password = inpPassword.value.trim();
     const phone = inpPhone.value.trim();
 
-    if (!username) return showModal("用户名不能为空哦！");
+    if (!username) return showModal(isLoginMode ? "账号不能为空哦！" : "用户名不能为空哦！");
     if (!password) return showModal("密码不能为空哦！");
 
     // 注册模式下的特殊校验拦截

@@ -29,25 +29,27 @@ public class AuthController implements IAuthService {
     @Override
     public Response<AuthResposeDTO> login(@RequestBody AuthRequestDTO user) {
         try {
-            if (user.getUsername() == null || user.getPassword() == null) {
+            if (user.getUsername() == null || user.getPassword() == null
+                    || user.getUsername().trim().isEmpty() || user.getPassword().trim().isEmpty()) {
                 return Response.<AuthResposeDTO>builder()
                         .code(ResponseCode.ILLEGAL_PARAMETER.getCode())
-                        .info(ResponseCode.ILLEGAL_PARAMETER.getInfo())
+                        .info("账号或密码不能为空")
                         .build();
             }
 
             UserEntity userEntity = UserEntity.builder()
-                    .username(user.getUsername())
+                    .username(user.getUsername().trim())
                     .password(user.getPassword())
                     .build();
 
-            Long userId = authService.checkUserLogin(userEntity);
+            UserEntity loggedInUser = authService.checkUserLogin(userEntity);
 
-            log.info("用户登录成功 username={}", user.getUsername());
+            log.info("用户登录成功 loginAccount={}, userId={}", user.getUsername(), loggedInUser.getUserId());
             AuthResposeDTO resp = AuthResposeDTO.builder()
-                    .userId(userId)
-                    .username(user.getUsername())
+                    .userId(loggedInUser.getUserId())
+                    .username(loggedInUser.getUsername())
                     .password(null)
+                    .phone(loggedInUser.getPhone())
                     .build();
             return Response.<AuthResposeDTO>builder()
                     .code(ResponseCode.SUCCESS.getCode())
@@ -90,9 +92,9 @@ public class AuthController implements IAuthService {
             }
 
             UserEntity userEntity = UserEntity.builder()
-                    .username(user.getUsername())
+                    .username(user.getUsername().trim())
                     .password(user.getPassword())
-                    .phone(user.getPhone())
+                    .phone(user.getPhone() == null ? null : user.getPhone().trim())
                     .build();
 
             UserEntity registered = authService.userRegister(userEntity);
