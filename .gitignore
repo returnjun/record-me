@@ -22,3 +22,5 @@ data/log/
 *.iml
 .DS_Store
 Thumbs.db
+
+# Final version marker for GitHub presentation.

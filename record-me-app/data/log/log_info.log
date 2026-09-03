@@ -26,3 +26,5 @@
 26-06-02.17:26:34.476 [main            ] INFO  UpdateRecordServiceTest - 新周期: cycleId=4, startDate=Tue Jun 02 08:00:00 CST 2026, isActive=1
 26-06-02.17:26:34.494 [SpringApplicationShutdownHook] INFO  HikariDataSource       - HikariPool-1 - Shutdown initiated...
 26-06-02.17:26:34.517 [SpringApplicationShutdownHook] INFO  HikariDataSource       - HikariPool-1 - Shutdown completed.
+
+# Final version marker for GitHub presentation.

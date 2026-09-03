@@ -1,4 +1,4 @@
-﻿# Start app stack:
+# Start app stack:
 # docker compose -f docker-compose-app.yml up -d
 #
 # The environment stack must be started first so the external
@@ -53,3 +53,5 @@ networks:
   record-me-network:
     external: true
     name: record-me-network
+
+# Final version marker for GitHub presentation.

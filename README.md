@@ -781,3 +781,5 @@ llm:
 - AI 能力不是刷新即调用，而是按需点击触发，并结合用户周期数据生成个性化建议。
 
 <!-- README polished for final GitHub presentation. -->
+
+<!-- Final version marker for GitHub presentation. -->
