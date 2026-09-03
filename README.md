@@ -779,3 +779,5 @@ llm:
 - 不是把业务写在大 Service 中，而是通过 DDD、多模块、策略树、责任链、Port/Adapter 组织复杂业务。
 - 不是只展示页面，而是有 MySQL 表结构、Docker Compose、Nginx 反向代理、多环境配置和真实部署规划。
 - AI 能力不是刷新即调用，而是按需点击触发，并结合用户周期数据生成个性化建议。
+
+<!-- README polished for final GitHub presentation. -->
