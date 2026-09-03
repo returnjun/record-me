@@ -47,6 +47,18 @@ function bindPressable(element, handler) {
     });
 }
 
+function normalizeAiText(text) {
+    return (text || '')
+        .replace(/\*\*(.*?)\*\*/g, '$1')
+        .replace(/^\s*[-_]{3,}\s*$/gm, '')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+}
+
+function setPersonaText(content, text) {
+    content.innerText = normalizeAiText(text);
+    content.scrollTop = 0;
+}
 function bindPageActions() {
     document.querySelectorAll('[data-href]').forEach((item) => {
         bindPressable(item, () => { window.location.href = item.dataset.href; });
@@ -68,6 +80,10 @@ function bindPageActions() {
         bindPressable(item, openCycleManagerModal);
     });
 
+    document.querySelectorAll('[data-action="persona"]').forEach((item) => {
+        bindPressable(item, openPersonaModal);
+    });
+
     bindPressable(document.getElementById('btn-ai-wallet'), () => showDevModal('AI 充值中心'));
     bindPressable(document.getElementById('profile-entry'), openUserInfoModal);
     bindPressable(document.getElementById('about-link'), () => showModalMsg('月月友：懂你的健康守护者\n当前版本：v1.0.0', true));
@@ -77,11 +93,66 @@ function bindPageActions() {
     document.getElementById('cycle-list-container').addEventListener('scroll', (event) => handleLazyLoad(event.currentTarget));
 }
 
+
+async function openPersonaModal() {
+    const modal = document.getElementById('persona-modal');
+    const content = document.getElementById('persona-content');
+    modal.classList.add('show');
+
+    if (personaCache) {
+        setPersonaText(content, personaCache);
+        return;
+    }
+    if (personaLoading) return;
+
+    personaLoading = true;
+    setPersonaText(content, 'AI 正在结合你的档案、周期记录和症状生成画像...');
+
+    try {
+        const res = await fetch(`${API_AI}/persona`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: USER_ID })
+        });
+        const json = await res.json();
+        if (json.code === '0000' && json.data && json.data.content) {
+            personaCache = normalizeAiText(json.data.content);
+            setPersonaText(content, personaCache);
+        } else {
+            setPersonaText(content, json.info || 'AI 人物画像暂时不可用，请稍后再试');
+        }
+    } catch (error) {
+        setPersonaText(content, '网络请求失败，请检查后端服务或稍后再试');
+    } finally {
+        personaLoading = false;
+    }
+}
 // --- 全局变量 ---
 let USER_ID = parseInt(getCookie('userId') || '', 10);
-const BASE_URL = window.__RECORD_ME_API_BASE__ || '';
+function resolveApiBase() {
+    if (typeof window.__RECORD_ME_API_BASE__ === 'string') {
+        return window.__RECORD_ME_API_BASE__;
+    }
+
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    const isLocalHost = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '';
+    const isLocalStaticServer = isLocalHost && port && port !== '80' && port !== '8088';
+
+    if (protocol === 'file:' || isLocalStaticServer) {
+        return 'http://127.0.0.1:8088';
+    }
+
+    return '';
+}
+
+const BASE_URL = resolveApiBase();
 const API_MINE = `${BASE_URL}/record/mine`;
+const API_AI = `${BASE_URL}/record/ai`;
 let currentUserData = { username: "加载中...", avatarSeed: "user" };
+let personaCache = null;
+let personaLoading = false;
 const IS_AUTHENTICATED = !Number.isNaN(USER_ID);
 
 if (!IS_AUTHENTICATED) {

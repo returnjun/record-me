@@ -5,6 +5,7 @@ import top.daoha.domain.health.adapter.repository.IHealthTrackRepository;
 import top.daoha.domain.health.model.entity.DailySymptomEntity;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 public class HealthTrackService implements IHealthTrackService {
@@ -24,6 +25,11 @@ public class HealthTrackService implements IHealthTrackService {
     @Override
     public Boolean changeSymptom(DailySymptomEntity dailySymptomEntity) {
         return healthTrackRepository.changeSymptom(dailySymptomEntity);
+    }
+
+    @Override
+    public List<DailySymptomEntity> listByCycleId(Long cycleId) {
+        return healthTrackRepository.listByCycleId(cycleId);
     }
 
 }

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -31,7 +31,7 @@
                 <div class="tile-icon icon-blue">👤</div>
                 <div class="tile-title">用户信息</div>
             </div>
-            <div class="menu-tile" data-dev-feature="人物画像" role="button" tabindex="0">
+            <div class="menu-tile" data-action="persona" role="button" tabindex="0">
                 <div class="tile-icon icon-pink">✨</div>
                 <div class="tile-title">人物画像</div>
             </div>
@@ -162,6 +162,14 @@
     </div>
 </div>
 
+
+<div class="modal-overlay" id="persona-modal">
+    <div class="glass-box persona-box">
+        <div class="close-btn" data-close="persona-modal" role="button" tabindex="0">×</div>
+        <div class="modal-title">AI 人物画像</div>
+        <div class="persona-content" id="persona-content">点击后将结合你的周期记录、症状和档案生成画像。</div>
+    </div>
+</div>
 <div class="modal-overlay custom-modal-overlay" id="custom-modal">
     <div class="glass-box custom-modal-box">
         <div class="modal-title">提示</div>

@@ -8,7 +8,9 @@ import top.daoha.infrastructure.dao.po.DailySymptom;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Repository
 public class HealthTrackRepository implements IHealthTrackRepository {
@@ -50,6 +52,19 @@ public class HealthTrackRepository implements IHealthTrackRepository {
         po.setNotes(dailySymptomEntity.getNotes());
         int count = dailySymptomDao.updateById(po);
         return count > 0;
+    }
+
+    @Override
+    public List<DailySymptomEntity> listByCycleId(Long cycleId) {
+        List<DailySymptom> poList = dailySymptomDao.selectByCycleId(cycleId);
+        List<DailySymptomEntity> entityList = new ArrayList<>();
+        if (poList == null) {
+            return entityList;
+        }
+        for (DailySymptom po : poList) {
+            entityList.add(toEntity(po));
+        }
+        return entityList;
     }
 
     private DailySymptomEntity toEntity(DailySymptom po) {

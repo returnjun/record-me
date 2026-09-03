@@ -8,7 +8,25 @@ function getCookie(name) {
 
 let USER_ID = parseInt(getCookie('userId') || '', 10);
 let USER_NAME = getCookie('username') || "元气少女";
-const BASE_URL = window.__RECORD_ME_API_BASE__ || '';
+function resolveApiBase() {
+    if (typeof window.__RECORD_ME_API_BASE__ === 'string') {
+        return window.__RECORD_ME_API_BASE__;
+    }
+
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    const isLocalHost = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '';
+    const isLocalStaticServer = isLocalHost && port && port !== '80' && port !== '8088';
+
+    if (protocol === 'file:' || isLocalStaticServer) {
+        return 'http://127.0.0.1:8088';
+    }
+
+    return '';
+}
+
+const BASE_URL = resolveApiBase();
 const API_DATA = `${BASE_URL}/record/data`;
 const IS_AUTHENTICATED = !Number.isNaN(USER_ID);
 

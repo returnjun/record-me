@@ -14,10 +14,31 @@ if (!IS_AUTHENTICATED) {
     window.location.replace('login.html');
 }
 
-const BASE_URL = window.__RECORD_ME_API_BASE__ || '';
+function resolveApiBase() {
+    if (typeof window.__RECORD_ME_API_BASE__ === 'string') {
+        return window.__RECORD_ME_API_BASE__;
+    }
+
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    const isLocalHost = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '';
+    const isLocalStaticServer = isLocalHost && port && port !== '80' && port !== '8088';
+
+    if (protocol === 'file:' || isLocalStaticServer) {
+        return 'http://127.0.0.1:8088';
+    }
+
+    return '';
+}
+
+const BASE_URL = resolveApiBase();
 const API_BASE = `${BASE_URL}/record/index`;
+const API_AI = `${BASE_URL}/record/ai`;
 
 let currentSymptoms = { flowLevel: 1, painLevel: 1, mood: "开心", notes: "无" };
+let aiAdviceCache = null;
+let aiAdviceLoading = false;
 
 const flowMap = { 0: "少量", 1: "正常", 2: "多量" };
 const painMap = { 0: "轻微", 1: "正常", 2: "剧烈" };
@@ -54,6 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById('btn-submit-symptom').addEventListener('click', submitSymptomRecord);
     document.getElementById('btn-save-note').addEventListener('click', saveNote);
+    bindPressable(document.getElementById('ai-advice-card'), loadAiHealthAdvice);
 
     // 为“发生了什么”按钮增加弹窗提示
     document.getElementById('btn-what').addEventListener('click', () => {
@@ -110,7 +132,7 @@ async function fetchInitialData(userId) {
 function renderUI(data) {
     if (data.userName) document.getElementById('user-name').innerText = data.userName;
     if (data.avatar) document.getElementById('user-avatar').style.backgroundImage = `url('${data.avatar}')`;
-    document.getElementById('ai-suggestion').innerText = data.aiSuggestion || "状态很好，很健康，保持好心情积极面对生活吧";
+    document.getElementById('ai-suggestion').innerText = '点击查看 AI 健康建议';
     if (data.comeDays) document.getElementById('date-come').innerText = data.comeDays;
     if (data.goDays) document.getElementById('date-go').innerText = data.goDays;
     const actionArea = document.getElementById('action-area');
@@ -118,6 +140,40 @@ function renderUI(data) {
     else if (data.status === 1) actionArea.classList.add('reverse');
 }
 
+async function loadAiHealthAdvice() {
+    if (aiAdviceLoading) return;
+
+    if (aiAdviceCache) {
+        await showModalMsg(aiAdviceCache, true);
+        return;
+    }
+
+    aiAdviceLoading = true;
+    const aiText = document.getElementById('ai-suggestion');
+    aiText.innerText = 'AI 正在结合你的周期记录分析中...';
+
+    try {
+        const response = await fetch(`${API_AI}/health_advice`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: USER_ID })
+        });
+        const resData = await response.json();
+        if (resData.code === '0000' && resData.data && resData.data.content) {
+            aiAdviceCache = resData.data.content;
+            aiText.innerText = 'AI 建议已生成，点击再次查看';
+            await showModalMsg(aiAdviceCache, true);
+        } else {
+            aiText.innerText = 'AI 建议暂时不可用，点击可重试';
+            await showModalMsg(resData.info || 'AI 建议暂时不可用，请稍后再试', true);
+        }
+    } catch (error) {
+        aiText.innerText = 'AI 建议暂时不可用，点击可重试';
+        await showModalMsg('网络请求失败，请检查后端服务或稍后再试', true);
+    } finally {
+        aiAdviceLoading = false;
+    }
+}
 async function init() {
     if (!IS_AUTHENTICATED) return;
     const res = await fetchInitialData(USER_ID);

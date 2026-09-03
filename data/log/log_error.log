@@ -1,42 +1,9 @@
-26-06-15.11:21:50.514 [http-nio-8088-exec-4] WARN  DefaultHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotReadableException: JSON parse error: Cannot deserialize value of type `java.util.Date` from String "2026-06-15 11:19:39": not a valid representation (error: Failed to parse Date value '2026-06-15 11:19:39': Cannot parse date "2026-06-15 11:19:39": while it seems to fit format 'yyyy-MM-dd'T'HH:mm:ss.SSSX', parsing fails (leniency? null)); nested exception is com.fasterxml.jackson.databind.exc.InvalidFormatException: Cannot deserialize value of type `java.util.Date` from String "2026-06-15 11:19:39": not a valid representation (error: Failed to parse Date value '2026-06-15 11:19:39': Cannot parse date "2026-06-15 11:19:39": while it seems to fit format 'yyyy-MM-dd'T'HH:mm:ss.SSSX', parsing fails (leniency? null))<EOL> at [Source: (org.springframework.util.StreamUtils$NonClosingInputStream); line: 6, column: 17] (through reference chain: top.daoha.api.dto.UserInfoRequestDTO["birthday"])]
-26-06-15.19:44:39.275 [main            ] WARN  AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'; nested exception is org.springframework.boot.web.server.PortInUseException: Port 8088 is already in use
-26-06-15.19:44:39.320 [main            ] ERROR LoggingFailureAnalysisReporter - 
-
-***************************
-APPLICATION FAILED TO START
-***************************
-
-Description:
-
-Web server failed to start. Port 8088 was already in use.
-
-Action:
-
-Identify and stop the process that's listening on port 8088 or configure this application to listen on another port.
-
-26-06-15.22:05:32.416 [http-nio-8088-exec-8] ERROR RecordIndexController  - 查询今日症状异常 userId=1, cycleId=7
-org.mybatis.spring.MyBatisSystemException: nested exception is org.apache.ibatis.binding.BindingException: Parameter 'cycleId' not found. Available parameters are [arg1, arg0, param1, param2]
-	at org.mybatis.spring.MyBatisExceptionTranslator.translateExceptionIfPossible(MyBatisExceptionTranslator.java:96)
-	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:441)
-	at jdk.proxy2/jdk.proxy2.$Proxy85.selectOne(Unknown Source)
-	at org.mybatis.spring.SqlSessionTemplate.selectOne(SqlSessionTemplate.java:160)
-	at org.apache.ibatis.binding.MapperMethod.execute(MapperMethod.java:87)
-	at org.apache.ibatis.binding.MapperProxy$PlainMethodInvoker.invoke(MapperProxy.java:152)
-	at org.apache.ibatis.binding.MapperProxy.invoke(MapperProxy.java:85)
-	at jdk.proxy2/jdk.proxy2.$Proxy89.selectByCycleIdAndDate(Unknown Source)
-	at top.daoha.infrastructure.adapter.repository.HealthTrackRepository.getTodaySymptom(HealthTrackRepository.java:22)
-	at top.daoha.infrastructure.adapter.repository.HealthTrackRepository$$FastClassBySpringCGLIB$$b2862023.invoke(<generated>)
-	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:218)
-	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:793)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
-	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:763)
-	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:137)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186)
-	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:763)
-	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:708)
-	at top.daoha.infrastructure.adapter.repository.HealthTrackRepository$$EnhancerBySpringCGLIB$$d1cd6dfb.getTodaySymptom(<generated>)
-	at top.daoha.domain.health.service.HealthTrackService.getTodaySymptom(HealthTrackService.java:17)
-	at top.daoha.trigger.http.RecordIndexController.getSymptom(RecordIndexController.java:207)
+26-08-24.23:15:06.357 [http-nio-8088-exec-4] WARN  DeepSeekClient         - DeepSeek 调用失败，第 1/3 次
+java.lang.RuntimeException: DeepSeek 内容为空
+	at top.daoha.trigger.llm.DeepSeekClient.doChat(DeepSeekClient.java:78)
+	at top.daoha.trigger.llm.DeepSeekClient.chat(DeepSeekClient.java:35)
+	at top.daoha.trigger.http.AiController.generate(AiController.java:75)
+	at top.daoha.trigger.http.AiController.getPersona(AiController.java:62)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -91,18 +58,3 @@ org.mybatis.spring.MyBatisSystemException: nested exception is org.apache.ibatis
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
 	at java.base/java.lang.Thread.run(Thread.java:833)
-Caused by: org.apache.ibatis.binding.BindingException: Parameter 'cycleId' not found. Available parameters are [arg1, arg0, param1, param2]
-	at org.apache.ibatis.binding.MapperMethod$ParamMap.get(MapperMethod.java:212)
-	at org.apache.ibatis.reflection.wrapper.MapWrapper.get(MapWrapper.java:45)
-	at org.apache.ibatis.reflection.MetaObject.getValue(MetaObject.java:122)
-	at org.apache.ibatis.executor.BaseExecutor.createCacheKey(BaseExecutor.java:219)
-	at org.apache.ibatis.executor.CachingExecutor.createCacheKey(CachingExecutor.java:146)
-	at org.apache.ibatis.executor.CachingExecutor.query(CachingExecutor.java:88)
-	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:147)
-	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:140)
-	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectOne(DefaultSqlSession.java:76)
-	at jdk.internal.reflect.GeneratedMethodAccessor44.invoke(Unknown Source)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
-	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:427)
-	... 73 common frames omitted

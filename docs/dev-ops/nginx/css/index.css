@@ -1,4 +1,4 @@
-/* ================= 全局样式与极光背景复用 ================= */
+﻿/* ================= 全局样式与极光背景复用 ================= */
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', sans-serif; }
 
 body {
@@ -45,6 +45,7 @@ body {
 
 /* ================= AI卡片特有样式 (修复遮挡) ================= */
 .ai-card {
+    cursor: pointer;
     padding: 25px 20px;
     text-align: center;
     margin-top: 15px; /* 增加上边距，防止标签顶到上面 */
@@ -65,7 +66,8 @@ body {
     box-shadow: 0 4px 12px rgba(184, 164, 245, 0.4);
     z-index: 11; /* 确保标签在卡片之上 */
 }
-.ai-text { font-size: 15px; color: #555; line-height: 1.6; font-weight: 600; }
+.ai-text { font-size: 15px; color: #555; line-height: 1.6; font-weight: 600; white-space: pre-line; }
+.ai-card:focus-visible { outline: 3px solid rgba(157, 125, 250, 0.24); outline-offset: 3px; }
 
 /* ================= 治愈系动画容器 ================= */
 .animation-container { height: 160px; width: 100%; }

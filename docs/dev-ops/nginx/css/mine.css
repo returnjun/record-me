@@ -242,3 +242,52 @@ button, input { font: inherit; }
         transition-duration: 0.01ms !important;
     }
 }
+
+#persona-modal {
+    padding: 24px 0;
+}
+
+.persona-box {
+    width: min(88%, 380px);
+    max-width: 380px;
+    height: min(74vh, 620px);
+    max-height: calc(100vh - 88px);
+    overflow: hidden;
+    padding: 26px 22px 22px;
+}
+
+.persona-box .modal-title {
+    flex: 0 0 auto;
+    margin-bottom: 14px;
+}
+
+.persona-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    white-space: pre-line;
+    text-align: left;
+    line-height: 1.75;
+    color: #5c6280;
+    font-size: 14px;
+    padding: 8px 8px 4px 2px;
+}
+
+.persona-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.persona-content::-webkit-scrollbar-thumb {
+    background: rgba(157, 125, 250, 0.28);
+    border-radius: 99px;
+}
+
+@media (max-width: 420px) {
+    .persona-box {
+        width: 86%;
+        height: min(72vh, 560px);
+    }
+}
