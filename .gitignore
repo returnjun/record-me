@@ -1,0 +1,24 @@
+# Build output
+**/target/
+
+# Runtime logs
+logs/
+log/
+data/log/
+*.log
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.jks
+
+# IDE and OS files
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db

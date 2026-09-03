@@ -9,7 +9,7 @@ services:
     restart: always
     environment:
       TZ: Asia/Shanghai
-      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?please set MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: period_tracker
     ports:
       - "13306:3306"
@@ -17,7 +17,7 @@ services:
       - mysql-data:/var/lib/mysql
       - ./mysql/sql:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p123456"]
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$${MYSQL_ROOT_PASSWORD}"]
       interval: 5s
       timeout: 10s
       retries: 10
@@ -35,7 +35,7 @@ services:
     environment:
       PMA_HOST: mysql
       PMA_PORT: 3306
-      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?please set MYSQL_ROOT_PASSWORD}
     depends_on:
       mysql:
         condition: service_healthy
@@ -71,7 +71,7 @@ services:
     environment:
       REDIS_HOSTS: local:redis:6379
       HTTP_USER: admin
-      HTTP_PASSWORD: admin
+      HTTP_PASSWORD: ${REDIS_ADMIN_PASSWORD:?please set REDIS_ADMIN_PASSWORD}
       LANG: C.UTF-8
       LANGUAGE: C.UTF-8
       LC_ALL: C.UTF-8

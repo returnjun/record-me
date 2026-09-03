@@ -1,22 +1,91 @@
-# 月月友 - 生理期管理、会员年卡支付与拼团交易系统
+<div align="center">
 
-> 一个面向女性健康记录场景的综合型系统：以“生理期记录 + AI 健康建议”为核心入口，结合会员年卡支付系统和拼团营销交易系统，形成从用户登录、健康数据记录、会员商品购买、拼团优惠、支付回调、补偿结算、会员权益开通到退款退单的完整业务闭环。
+# 🌙 月月友
 
-## 项目定位
+### 生理期管理 · AI 健康分析 · 会员拼团 · 支付履约
 
-本项目适合在简历中定位为：**基于 DDD 架构的会员年卡支付与拼团交易系统**。
+一个完整的 **月月友生理期管理系统**，包含健康记录、AI 分析、会员年卡、拼团优惠、支付宝支付、异步补偿、会员权益开通与退款退单等能力。
 
-它不是一个简单的“生理期记录页面”或“调用支付宝付款”的演示项目，而是把三个业务系统组合成一个完整产品：
+<p>
+  <img src="https://img.shields.io/badge/Java-8-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java 8" />
+  <img src="https://img.shields.io/badge/Spring%20Boot-2.7.12-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" alt="Spring Boot" />
+  <img src="https://img.shields.io/badge/DDD-Architecture-8A63D2?style=for-the-badge" alt="DDD" />
+  <img src="https://img.shields.io/badge/MySQL-8-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL" />
+  <img src="https://img.shields.io/badge/RabbitMQ-Async-FF6600?style=for-the-badge&logo=rabbitmq&logoColor=white" alt="RabbitMQ" />
+  <img src="https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker Compose" />
+</p>
 
-- **月月友记录系统 `record-me`**：负责登录注册、用户档案、生理周期管理、症状记录、数据展示、AI 健康建议和 AI 人物画像。
-- **会员年卡支付系统 `myddd`**：负责会员商品下单、支付宝预支付、支付回调验签、支付补偿、超时关单、会员权益开通和退款。
-- **拼团营销交易系统 `group-buy-me`**：负责营销试算、拼团锁单、优惠计算、名额占用、成团结算、退单补偿和活动动态治理。
+<p>
+  <img src="记录系统/主页面.png" width="230" alt="月月友首页" />
+  <img src="记录系统/拼团主界面.png" width="230" alt="拼团会员页" />
+  <img src="记录系统/支付界面.png" width="230" alt="支付界面" />
+</p>
 
-三个系统合并后，用户可以在“月月友”里完成健康记录，也可以购买会员年卡；购买时可参与拼团优惠，支付成功后自动开通会员权益，支付异常或拼团失败时进入补偿、关单或退款流程。
+</div>
 
-> 说明：项目采用多个独立服务协作的方式组织，但没有使用 Spring Cloud，因此不应描述为 Spring Cloud 微服务项目。支付系统中配置文件可能出现 Redis 容器参数，但支付核心业务当前主要使用 Guava 本地缓存，不建议在简历中写“支付服务使用 Redis 实现缓存”。Redis/Redisson 是拼团营销系统中的重点能力。
+---
 
-## 功能预览
+## 📌 目录
+
+- [🧭 系统定位](#project-position)
+- [✨ 项目速览](#project-overview)
+- [🖼️ 功能预览](#screenshots)
+- [🔁 核心业务闭环](#business-loop)
+- [🏗️ 系统架构](#architecture)
+- [🧰 技术栈](#tech-stack)
+- [🧩 DDD 分层设计](#ddd)
+- [🌙 记录系统业务设计](#record-service)
+- [💳 会员权益支付服务业务设计](#payment-service)
+- [🤝 拼团营销服务业务设计](#group-buy-service)
+- [🚀 部署说明](#deploy)
+
+---
+
+<a id="project-position"></a>
+
+## 🧭 系统定位
+
+**月月友** 是一个完整的生理期管理系统，围绕用户健康记录、会员权益和拼团优惠购买流程进行设计。系统内部包含三个微服务：
+
+<table>
+  <tr>
+    <td width="33%" align="center"><b>🌙 健康记录服务</b><br/><sub>登录注册、用户档案、生理周期管理、症状记录、数据展示、AI 健康建议和 AI 人物画像</sub></td>
+    <td width="33%" align="center"><b>💳 会员权益支付服务</b><br/><sub>会员商品下单、支付宝预支付、支付回调验签、支付补偿、超时关单、会员权益开通和退款</sub></td>
+    <td width="33%" align="center"><b>🤝 拼团营销服务</b><br/><sub>营销试算、拼团锁单、优惠计算、名额占用、成团结算、退单补偿和活动动态治理</sub></td>
+  </tr>
+</table>
+
+用户可以在月月友中记录生理周期和每日症状，查看数据趋势与 AI 建议；也可以购买会员年卡并参与拼团优惠。支付成功后系统自动完成拼团结算与会员权益开通，支付异常、超时未支付、拼团失败或用户退款时，则进入补偿、关单或退单链路。
+
+> [!IMPORTANT]
+> 本系统采用多个独立微服务协作，但没有使用 Spring Cloud，因此 README 中不描述为 Spring Cloud 项目。会员权益支付服务的核心缓存能力以 Guava 本地缓存为主；Redis / Redisson 主要用于拼团营销服务中的名额占用、幂等锁和并发控制。
+
+
+<a id="project-overview"></a>
+
+## ✨ 项目速览
+
+<table>
+  <tr>
+    <td width="25%" align="center"><b>🩺 健康记录</b><br/><sub>周期预测、症状打卡、数据看板、个人档案</sub></td>
+    <td width="25%" align="center"><b>🧠 AI 分析</b><br/><sub>DeepSeek 健康建议、人物画像、点击触发、异常容错</sub></td>
+    <td width="25%" align="center"><b>💳 支付闭环</b><br/><sub>会员年卡、支付宝预支付、回调验签、掉单补偿</sub></td>
+    <td width="25%" align="center"><b>🤝 拼团交易</b><br/><sub>营销试算、拼团锁单、成团结算、退款退单</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><b>🧩 DDD 架构</b><br/><sub>api / domain / infrastructure / trigger / types / app</sub></td>
+    <td align="center"><b>📨 异步解耦</b><br/><sub>RabbitMQ、Topic Exchange、权益开通、退款通知</sub></td>
+    <td align="center"><b>🧱 并发控制</b><br/><sub>Redis 原子计数、Redisson、SET NX、库存补偿</sub></td>
+    <td align="center"><b>🚀 容器部署</b><br/><sub>Docker Compose、Nginx、MySQL、多环境配置</sub></td>
+  </tr>
+</table>
+
+> [!TIP]
+> 这是一个能体现“业务复杂度、架构分层、支付可靠性、拼团并发和工程部署”的综合系统。
+
+<a id="screenshots"></a>
+
+## 🖼️ 功能预览
 
 ### 登录与注册
 
@@ -65,7 +134,9 @@
   </tr>
 </table>
 
-## 核心业务闭环
+<a id="business-loop"></a>
+
+## 🔁 核心业务闭环
 
 完整链路可以概括为：
 
@@ -88,20 +159,22 @@
 
 项目重点不是单个接口的增删改查，而是多个业务域协作后的交易完整性：正向交易、异步履约和逆向退款都被纳入了设计。
 
-## 系统架构
+<a id="architecture"></a>
+
+## 🏗️ 系统架构
 
 ```mermaid
 flowchart LR
     U[用户浏览器] --> N[Nginx 静态资源与反向代理]
-    N --> R[record-me 生理期记录服务]
+    N --> R[健康记录服务]
     R --> DB1[(MySQL period_tracker)]
     R --> AI[DeepSeek LLM]
 
-    N --> P[myddd 会员年卡支付服务]
+    N --> P[会员权益支付服务]
     P --> DB2[(MySQL 支付订单库)]
     P --> ALI[支付宝开放平台]
     P --> MQ[(RabbitMQ)]
-    P --> G[group-buy-me 拼团营销服务]
+    P --> G[拼团营销服务]
 
     G --> DB3[(MySQL 拼团交易库)]
     G --> REDIS[(Redis / Redisson)]
@@ -115,11 +188,13 @@ flowchart LR
 
 | 服务 | 职责 | 关键能力 |
 | --- | --- | --- |
-| `record-me` | 生理期记录和用户健康入口 | 登录注册、周期预测、症状打卡、数据看板、AI 健康建议、AI 人物画像 |
-| `myddd` | 会员年卡支付服务 | 订单创建、支付宝预支付、回调验签、支付补偿、超时关单、会员权益开通、退款 |
-| `group-buy-me` | 拼团营销交易服务 | 营销试算、优惠策略、拼团锁单、名额占用、成团结算、退单补偿、动态治理 |
+| 健康记录服务 | 生理期记录和用户健康入口 | 登录注册、周期预测、症状打卡、数据看板、AI 健康建议、AI 人物画像 |
+| 会员权益支付服务 | 会员购买和支付履约 | 订单创建、支付宝预支付、回调验签、支付补偿、超时关单、会员权益开通、退款 |
+| 拼团营销服务 | 拼团优惠和交易结算 | 营销试算、优惠策略、拼团锁单、名额占用、成团结算、退单补偿、动态治理 |
 
-## 技术栈
+<a id="tech-stack"></a>
+
+## 🧰 技术栈
 
 ### 月月友记录服务 `record-me`
 
@@ -135,7 +210,7 @@ flowchart LR
 | 部署 | Docker、Docker Compose、Nginx、Logback、dev/test/prod 多环境配置 |
 | 辅助组件 | Lombok、Guava、Apache Commons、Spring Security Crypto |
 
-### 会员年卡支付服务 `myddd`
+### 会员权益支付服务
 
 | 分类 | 技术 |
 | --- | --- |
@@ -151,7 +226,7 @@ flowchart LR
 | 异步处理 | 自定义线程池，支持核心线程数、队列长度和拒绝策略配置 |
 | 辅助组件 | Lombok、Fastjson、Hutool、Apache Commons |
 
-### 拼团营销交易服务 `group-buy-me`
+### 拼团营销服务
 
 | 分类 | 技术 |
 | --- | --- |
@@ -168,7 +243,9 @@ flowchart LR
 | 部署 | Docker、Docker Compose、Nginx |
 | 前端 | HTML、CSS、原生 JavaScript、Fetch API |
 
-## DDD 分层设计
+<a id="ddd"></a>
+
+## 🧩 DDD 分层设计
 
 三个服务都尽量避免把业务逻辑写成传统的 Controller-Service-DAO 直连模式，而是采用更接近 DDD 和六边形架构的组织方式。
 
@@ -184,30 +261,30 @@ record-me
 └── record-me-app             # Spring Boot 启动类、配置文件、Dockerfile
 ```
 
-### `myddd` 支付服务模块划分
+### 会员权益支付服务模块划分
 
 ```text
-myddd
-├── myddd-api             # 接口协议和 DTO
-├── myddd-domain          # 订单聚合、支付聚合、会员权益领域服务
-├── myddd-infrastructure  # MyBatis、RabbitMQ、支付宝、营销服务适配器
-├── myddd-trigger         # Controller、MQ Listener、定时任务
-├── myddd-types           # 公共类型、异常、事件模型
-└── myddd-app             # 应用启动和基础配置
+payment-service
+├── payment-api             # 接口协议和 DTO
+├── payment-domain          # 订单聚合、支付聚合、会员权益领域服务
+├── payment-infrastructure  # MyBatis、RabbitMQ、支付宝、营销服务适配器
+├── payment-trigger         # Controller、MQ Listener、定时任务
+├── payment-types           # 公共类型、异常、事件模型
+└── payment-app             # 应用启动和基础配置
 ```
 
 支付服务的领域层通过 Repository、Port 接口依赖外部能力，基础设施层负责具体实现，从而避免核心业务直接依赖 MyBatis、支付宝 SDK 或营销服务 HTTP 客户端。
 
-### `group-buy-me` 拼团服务模块划分
+### 拼团营销服务模块划分
 
 ```text
-group-buy-me
-├── group-buy-me-api             # 接口定义、请求和响应 DTO
-├── group-buy-me-trigger         # HTTP 接口、RabbitMQ 消费者、定时任务
-├── group-buy-me-domain          # 营销试算、锁单、结算、退单等核心业务
-├── group-buy-me-infrastructure  # MyBatis、Redis、RabbitMQ、HTTP 回调等基础设施
-├── group-buy-me-types           # 公共枚举、异常、设计框架与通用类型
-└── group-buy-me-app             # 应用启动、组件装配和环境配置
+group-marketing-service
+├── group-api             # 接口定义、请求和响应 DTO
+├── group-trigger         # HTTP 接口、RabbitMQ 消费者、定时任务
+├── group-domain          # 营销试算、锁单、结算、退单等核心业务
+├── group-infrastructure  # MyBatis、Redis、RabbitMQ、HTTP 回调等基础设施
+├── group-types           # 公共枚举、异常、设计框架与通用类型
+└── group-app             # 应用启动、组件装配和环境配置
 ```
 
 这种拆分方式的价值在于：
@@ -217,7 +294,9 @@ group-buy-me
 - Infrastructure 层负责数据库、MQ、Redis、支付宝、外部 HTTP 服务等技术细节。
 - API/Types 模块让接口协议、通用枚举和异常模型更清晰，便于服务之间协作。
 
-## 记录系统业务设计
+<a id="record-service"></a>
+
+## 🌙 记录系统业务设计
 
 ### 1. 登录注册与用户档案
 
@@ -258,7 +337,9 @@ group-buy-me
 
 AI 输出遵循谨慎原则：只基于记录数据给出健康建议，不做疾病诊断，不开药，不制造焦虑；遇到明显异常时提示线下咨询医生。
 
-## 支付服务业务设计
+<a id="payment-service"></a>
+
+## 💳 会员权益支付服务业务设计
 
 ### 1. 完整的会员年卡支付闭环
 
@@ -320,7 +401,9 @@ AI 输出遵循谨慎原则：只基于记录数据给出健康建议，不做�
 
 领域层只依赖 Port 接口，不直接依赖具体 HTTP 实现，体现了六边形架构中的端口与适配器思想。
 
-## 拼团营销系统业务设计
+<a id="group-buy-service"></a>
+
+## 🤝 拼团营销服务业务设计
 
 ### 1. 完整的拼团交易闭环
 
@@ -402,7 +485,7 @@ AI 输出遵循谨慎原则：只基于记录数据给出健康建议，不做�
 - 锁单失败后的名额恢复
 - 退单成功后的库存补偿
 
-这是项目中最适合面试展开讲的并发场景之一：为什么不能只靠数据库扣库存，如何减少热点行压力，Redis 扣减失败和数据库落库失败时如何回滚。
+这是项目中最有价值的并发场景之一：为什么不能只靠数据库扣库存，如何减少热点行压力，Redis 扣减失败和数据库落库失败时如何回滚。
 
 ### 6. 本地消息表保障通知可靠性
 
@@ -455,7 +538,7 @@ AI 输出遵循谨慎原则：只基于记录数据给出健康建议，不做�
 
 自定义线程池支持配置核心线程数、最大线程数、队列容量和拒绝策略，便于根据业务压力调整。
 
-## 核心接口概览
+## 🔌 核心接口概览
 
 ### 记录系统接口
 
@@ -490,13 +573,13 @@ AI 输出遵循谨慎原则：只基于记录数据给出健康建议，不做�
 | 成团结算 | 拼团人数满足后结算队伍，通知支付服务履约 |
 | 退款退单 | 根据订单状态选择退单策略，调用支付宝退款并恢复拼团资源 |
 
-## 数据库设计概览
+## 🗄️ 数据库设计概览
 
 ### 记录系统核心表
 
 | 表名 | 说明 |
 | --- | --- |
-| `user_info` | 用户基础信息，包含用户名、密码、头像、手机号、生日、身高、体重、平均周期天数、平均经期天数 |
+| `user_info` | 用户基础信息，包含用户名、密码哈希、头像、手机号、生日、身高、体重、平均周期天数、平均经期天数 |
 | `cycle_record` | 生理周期记录，包含开始日期、结束日期、当前周期标记、逻辑删除字段 |
 | `daily_symptom` | 每日症状打卡，包含流量、疼痛等级、心情和备注 |
 | `daily_behavior_log` | 每日行为与外部因素聚合数据，使用 JSON 保存饮食、运动、睡眠、用药等行为 |
@@ -508,7 +591,7 @@ AI 输出遵循谨慎原则：只基于记录数据给出健康建议，不做�
 
 两个服务的共同设计目标是：业务状态可追踪、异常链路可补偿、外部通知可重试。
 
-## 前端设计
+## 🎨 前端设计
 
 前端采用原生 HTML、CSS 和 JavaScript，没有引入大型前端框架，便于部署到 Nginx 静态目录。
 
@@ -533,7 +616,9 @@ docs/dev-ops/nginx
 - API 地址在前端脚本顶部集中处理，本地打开时自动请求 `127.0.0.1:8088`，线上部署时使用同源反向代理。
 - 底部导航、卡片、弹窗、按钮增加玻璃拟态、渐变、阴影、过渡动画和移动端触摸反馈。
 
-## 部署说明
+<a id="deploy"></a>
+
+## 🚀 部署说明
 
 ### 环境要求
 
@@ -610,16 +695,16 @@ docker compose -f docker-compose-app.yml up -d
 5. 访问：
 
 ```text
-http://record.daoha.top
+https://<record-subdomain>
 ```
 
 生产环境建议通过 `.env` 或服务器环境变量配置：
 
 ```bash
-DEEPSEEK_API_KEY=你的 DeepSeek Key
+DEEPSEEK_API_KEY=<your-deepseek-api-key>
 ```
 
-不要把真实 API Key、支付宝私钥、数据库密码提交到 GitHub。
+不要把真实 API Key、支付宝私钥、数据库密码、域名、服务器 IP 等敏感信息提交到 GitHub。
 
 ### Nginx 说明
 
@@ -628,15 +713,15 @@ Nginx 负责两件事：
 - 托管 `docs/dev-ops/nginx` 下的静态页面。
 - 将 `/record/` 开头的 API 请求反向代理到 `record-me-app:8088`。
 
-线上域名规划：
+公开仓库中的部署信息建议使用占位符：
 
 | 域名 | 说明 |
 | --- | --- |
-| `daoha.top` | 主域名 |
-| `record.daoha.top` | 月月友记录系统访问域名 |
-| `82.157.190.244` | 服务器 IP |
+| `<your-domain>` | 示例主域名，占位展示 |
+| `<record-subdomain>` | 示例业务访问域名，占位展示 |
+| `<server-ip>` | 服务器公网 IP，占位展示 |
 
-## 配置说明
+## ⚙️ 配置说明
 
 ### 记录服务核心配置
 
@@ -648,9 +733,9 @@ spring:
   profiles:
     active: dev
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/period_tracker
-    username: root
-    password: 123456
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/period_tracker
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
 
 llm:
   deepseek:
@@ -676,33 +761,7 @@ llm:
 </script>
 ```
 
-## 简历写法参考
-
-### 项目名称
-
-月月友生理期管理系统：基于 DDD 架构的会员年卡支付与拼团交易系统
-
-### 简历描述
-
-- 基于 Java 8、Spring Boot、MyBatis、MySQL、RabbitMQ、Redis、Docker 和 Nginx 搭建月月友生理期管理、会员年卡支付与拼团交易系统，覆盖健康记录、AI 建议、会员购买、营销锁单、支付宝支付、回调验签、补偿关单、拼团结算、权益开通和退款退单完整业务链路。
-- 采用 DDD 分层和 Maven 多模块拆分，将接口协议、领域模型、基础设施适配、触发器和公共类型解耦；领域层通过 Repository 和 Port 接口依赖外部能力，降低业务逻辑对 MyBatis、支付宝 SDK、Redis、RabbitMQ 和 HTTP 客户端的直接依赖。
-- 设计会员年卡支付闭环，支持重复下单复用、支付宝预支付、RSA2 回调验签、支付状态推进、定时掉单补偿和超时关单，提升支付链路在网络异常、回调丢失和重复请求场景下的稳定性。
-- 设计拼团营销交易链路，通过策略树编排营销试算，通过策略模式支持固定价、直减、折扣、满减等优惠模型，通过责任链拆分锁单、结算、退单规则，提升复杂营销规则的可扩展性。
-- 使用 Redis 原子计数、Redisson 分布式锁、`SET NX` 幂等锁和数据库条件更新控制拼团名额占用，并在锁单失败、退单成功等场景中进行库存恢复和任务补偿。
-- 使用 RabbitMQ 解耦支付成功后的会员权益开通、拼团成功后的批量结算和失败退单后的退款流程；结合本地消息表、失败重试和定时任务实现业务数据与通知任务的一致性保障。
-- 在记录系统中接入 DeepSeek LLM，根据用户周期、症状和档案数据生成健康建议与用户画像；采用点击触发方式避免页面刷新频繁调用模型，并对 LLM 空响应、异常响应和长文本展示进行容错处理。
-- 前端使用 HTML、CSS、原生 JavaScript 和 Fetch API 实现移动端风格页面，支持登录态拦截、周期状态展示、症状打卡、数据看板、档案编辑、AI 弹窗、会员商品页、订单列表和支付确认交互。
-
-### 面试重点讲法
-
-建议优先讲以下四条主线：
-
-1. **DDD 架构拆分**：为什么把 api、domain、infrastructure、trigger、types、app 拆开，领域层如何不依赖具体技术实现。
-2. **支付交易闭环**：从创建订单、营销锁单、支付宝支付、回调验签到权益开通，异常时如何补偿。
-3. **拼团并发控制**：Redis 名额占用、Redisson 锁、幂等锁、数据库状态更新和失败恢复之间如何配合。
-4. **异步一致性**：RabbitMQ、本地消息表、定时任务、失败重试分别解决什么问题，哪些地方还可以继续增强。
-
-## 项目边界与后续优化
+## 🛣️ 项目边界与后续优化
 
 当前项目已经具备较完整的业务链路，但仍有一些可以继续增强的方向：
 
@@ -713,9 +772,9 @@ llm:
 - 测试完善：补充领域服务单元测试、支付回调验签测试、拼团锁单并发测试和补偿任务集成测试。
 - 可观测性：完善 Prometheus 指标、日志 TraceId、关键链路耗时统计和失败告警。
 
-## 项目亮点总结
+## ⭐ 项目亮点总结
 
-- 不是单一 CRUD 项目，而是健康记录、会员支付和拼团营销组合后的完整业务系统。
+- 覆盖健康记录、会员支付和拼团营销等核心能力，是一个完整的月月友生理期管理系统。
 - 不是简单调用支付宝，而是覆盖订单、支付、回调、补偿、结算、权益、退款的交易闭环。
 - 不是把业务写在大 Service 中，而是通过 DDD、多模块、策略树、责任链、Port/Adapter 组织复杂业务。
 - 不是只展示页面，而是有 MySQL 表结构、Docker Compose、Nginx 反向代理、多环境配置和真实部署规划。

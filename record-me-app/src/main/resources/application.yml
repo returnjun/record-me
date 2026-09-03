@@ -1,4 +1,4 @@
-﻿spring:
+spring:
   config:
     name: record-me-app
   profiles:
@@ -8,7 +8,7 @@ llm:
   deepseek:
     model: deepseek-v4-flash
     base-url: https://api.deepseek.com
-    api-key: sk-5bd0419d418041afa878d51d658d5250
+    api-key: ${DEEPSEEK_API_KEY:}
     timeout: 120
     max-retries: 3
     retry-sleep: 2.0
