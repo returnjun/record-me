@@ -16,7 +16,9 @@ data/log/
 *.p12
 *.jks
 
-# IDE and OS files
+# IDE, local runtime and OS files
+.run/
+
 .idea/
 .vscode/
 *.iml
